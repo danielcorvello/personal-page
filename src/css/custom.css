@@ -1,0 +1,46 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #c6d80e;
+  --ifm-color-primary-dark: #b2c20d;
+  --ifm-color-primary-darker: #a8b70c;
+  --ifm-color-primary-darkest: #8a970a;
+  --ifm-color-primary-light: #d0dc0f;
+  --ifm-color-primary-lighter: #d5e010;
+  --ifm-color-primary-lightest: #dfe832;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme="dark"] {
+  --ifm-color-primary: #d5e332;
+  --ifm-color-primary-dark: #d1e018;
+  --ifm-color-primary-darker: #cedd15;
+  --ifm-color-primary-darkest: #aab911;
+  --ifm-color-primary-light: #d9e64c;
+  --ifm-color-primary-lighter: #dce959;
+  --ifm-color-primary-lightest: #e5f07d;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Center Mermaid diagrams */
+.docusaurus-mermaid-container {
+  text-align: center; /* Centers inline content like the SVG */
+}
+
+.docusaurus-mermaid-container svg {
+  display: block; /* Makes the SVG a block element */
+  margin: 0 auto; /* Centers the block element */
+}
+
+.img-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

@@ -1,0 +1,39 @@
+dotnet:
+  label: .NET
+  permalink: /dotnet
+  description: .NET Development
+
+fastendpoints:
+  label: FastEndpoints
+  permalink: /fastendpoints
+  description: FastEndpoints
+
+vsa:
+  label: Vertical Slice Architecture
+  permalink: /vsa
+  description: Vertical Slice Architecture
+
+ddd:
+  label: Domain-Driven Design
+  permalink: /ddd
+  description: Domain-Driven Design
+
+efcore:
+  label: EF Core
+  permalink: /efcore
+  description: Entity Framework Core
+ 
+aspire:
+  label: Aspire
+  permalink: /aspire
+  description: Aspire
+
+sqlserver:
+  label: SQL Server
+  permalink: /sqlserver
+  description: SQL Server    
+
+api:
+  label: API
+  permalink: /api
+  description: API Development

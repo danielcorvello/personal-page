@@ -1,41 +1,10 @@
-# Website
+# Blog / Site pessoal de Daniel Corvello - .NET Developer
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Este repositório contém o código-fonte do meu blog/site pessoal onde pretendo compartilhar meus conhecimentos, experiências e projetos relacionados ao desenvolvimento .NET e outras tecnologias.
 
-## Installation
+## Tecnologia utilizada
+- Docusaurus [https://docusaurus.io/]: Framework estático para construção de sites, blogs e documentação técnica.
 
-```bash
-yarn
-```
-
-## Local Development
-
-```bash
-yarn start
-```
-
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
-
-## Build
-
-```bash
-yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-## Deployment
-
-Using SSH:
-
-```bash
-USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+## Entre em contato
+- LinkedIn: [https://www.linkedin.com/in/danielcorvello/](https://www.linkedin.com/in/danielcorvello/)
+- GitHub: [https://github.com/danielcorvello](https://github.com/danielcorvello)

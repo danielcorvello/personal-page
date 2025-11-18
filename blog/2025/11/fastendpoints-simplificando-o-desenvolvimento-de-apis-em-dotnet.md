@@ -5,6 +5,7 @@ authors: [corvello]
 tags: [dotnet, fastendpoints, api, vsa]
 date: 2025-11-13
 toc_max_heading_level: 3
+image: /img/blog/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet/og_image.png
 ---
 
 # FastEndpoints: Simplificando o desenvolvimento de APIs em .NET

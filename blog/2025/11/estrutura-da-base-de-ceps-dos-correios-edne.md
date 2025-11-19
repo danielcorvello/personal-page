@@ -142,17 +142,17 @@ public class EstadoConfiguration : IEntityTypeConfiguration<Estado>
         builder.HasKey(u => u.Uf);
 
         builder.Property(u => u.Uf)
-            .HasColumnName("UFE_SG")
+            .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
 
         builder.Property(u => u.Nome)
-            .HasColumnName("UFE_NO")
+            .HasColumnName("ufe_no")
             .IsRequired()
             .HasMaxLength(19);
 
         builder.Property(u => u.Ibge)
-            .HasColumnName("UFE_NU")
+            .HasColumnName("ufe_nu")
             .IsRequired()
             .HasMaxLength(2);
     }
@@ -220,7 +220,7 @@ public class FaixaCepEstadoConfiguration : IEntityTypeConfiguration<FaixaCepEsta
         builder.HasKey(f => new { f.Uf, f.CepInicial });
 
         builder.Property(f => f.Uf)
-            .HasColumnName("UFE_SG")
+            .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
 
@@ -230,12 +230,12 @@ public class FaixaCepEstadoConfiguration : IEntityTypeConfiguration<FaixaCepEsta
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(f => f.CepInicial)
-            .HasColumnName("UFE_CEP_INI")
+            .HasColumnName("ufe_cep_ini")
             .IsRequired()
             .HasMaxLength(8);
 
         builder.Property(f => f.CepFinal)
-            .HasColumnName("UFE_CEP_FIM")
+            .HasColumnName("ufe_cep_fim")
             .IsRequired()
             .HasMaxLength(8);
     }
@@ -443,11 +443,11 @@ public class LocalidadeConfiguration : IEntityTypeConfiguration<Localidade>
         builder.HasKey(l => l.Id);
 
         builder.Property(l => l.Id)
-            .HasColumnName("LOC_NU")
+            .HasColumnName("loc_nu")
             .ValueGeneratedNever();
 
         builder.Property(l => l.Uf)
-            .HasColumnName("UFE_SG")
+            .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
 
@@ -457,29 +457,29 @@ public class LocalidadeConfiguration : IEntityTypeConfiguration<Localidade>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(l => l.Nome)
-            .HasColumnName("LOC_NO")
+            .HasColumnName("loc_no")
             .IsRequired()
             .HasMaxLength(72);
 
         builder.Property(l => l.Cep)
-            .HasColumnName("LOC_CEP")
+            .HasColumnName("loc_cep")
             .HasMaxLength(8);
 
         builder.Property(l => l.Situacao)
-            .HasColumnName("LOC_IN_SIT");
+            .HasColumnName("loc_in_sit");
 
         builder.Property(l => l.Tipo)
-            .HasColumnName("LOC_IN_TIPO_LOC");
+            .HasColumnName("loc_in_tipo_loc");
 
         builder.Property(l => l.SubordinadaId)
-            .HasColumnName("LOC_NU_SUB");
+            .HasColumnName("loc_nu_sub");
 
         builder.Property(l => l.NomeAbreviado)
-            .HasColumnName("LOC_NO_ABREV")
+            .HasColumnName("loc_no_abrev")
             .HasMaxLength(36);
 
         builder.Property(l => l.Ibge)
-            .HasColumnName("MUN_NU")
+            .HasColumnName("mun_nu")
             .HasMaxLength(7);
     }
 }
@@ -596,15 +596,15 @@ public class VariacaoLocalidadeConfiguration : IEntityTypeConfiguration<Variacao
         builder.HasKey(b => new { b.LocalidadeId, b.Ordem });
 
         builder.Property(b => b.LocalidadeId)
-            .HasColumnName("LOC_NU")
+            .HasColumnName("loc_nu")
             .ValueGeneratedNever();
 
         builder.Property(b => b.Ordem)
-            .HasColumnName("VAL_NU")
+            .HasColumnName("val_nu")
             .ValueGeneratedNever();
 
         builder.Property(b => b.Denominacao)
-            .HasColumnName("VAL_TX")
+            .HasColumnName("val_tx")
             .IsRequired()
             .HasMaxLength(72);
     }
@@ -696,8 +696,7 @@ using Correios.DneBasico.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class FaixaCepLocalidadeConfiguration : 
-             IEntityTypeConfiguration<FaixaCepLocalidade>
+public class FaixaCepLocalidadeConfiguration : IEntityTypeConfiguration<FaixaCepLocalidade>
 {
     public void Configure(EntityTypeBuilder<FaixaCepLocalidade> builder)
     {
@@ -706,21 +705,21 @@ public class FaixaCepLocalidadeConfiguration :
         builder.HasKey(f => new { f.LocalidadeId, f.CepInicial, f.TipoFaixa });
 
         builder.Property(f => f.LocalidadeId)
-            .HasColumnName("LOC_NU")
+            .HasColumnName("loc_nu")
             .ValueGeneratedNever();
 
         builder.Property(f => f.CepInicial)
-            .HasColumnName("LOC_CEP_INI")
+            .HasColumnName("loc_cep_ini")
             .IsRequired()
             .HasMaxLength(8);
 
         builder.Property(f => f.CepFinal)
-            .HasColumnName("LOC_CEP_FIM")
+            .HasColumnName("loc_cep_fim")
             .IsRequired()
             .HasMaxLength(8);
 
         builder.Property(f => f.TipoFaixa)
-            .HasColumnName("LOC_TIPO_FAIXA")
+            .HasColumnName("loc_tipo_faixa")
             .IsRequired();
     }
 }
@@ -798,25 +797,25 @@ public class BairroConfiguration : IEntityTypeConfiguration<Bairro>
         builder.HasKey(b => b.Id);
 
         builder.Property(b => b.Id)
-            .HasColumnName("BAI_NU")
+            .HasColumnName("bai_nu")
             .ValueGeneratedNever();
 
         builder.Property(b => b.UF)
-            .HasColumnName("UFE_SG")
+            .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
 
         builder.Property(b => b.LocalidadeId)
-            .HasColumnName("LOC_NU")
+            .HasColumnName("loc_nu")
             .IsRequired();
 
         builder.Property(b => b.Nome)
-            .HasColumnName("BAI_NO")
+            .HasColumnName("bai_no")
             .IsRequired()
             .HasMaxLength(72);
 
         builder.Property(b => b.NomeAbreviado)
-            .HasColumnName("BAI_NO_ABREV")
+            .HasColumnName("bai_no_abrev")
             .HasMaxLength(36);
     }
 }
@@ -882,8 +881,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Correios.DneBasico.Data.Configurations;
-public class VariacaoBairroConfiguration : 
-             IEntityTypeConfiguration<VariacaoBairro>
+public class VariacaoBairroConfiguration : IEntityTypeConfiguration<VariacaoBairro>
 {
     public void Configure(EntityTypeBuilder<VariacaoBairro> builder)
     {
@@ -892,15 +890,15 @@ public class VariacaoBairroConfiguration :
         builder.HasKey(b => new { b.BairroId, b.Ordem });
 
         builder.Property(b => b.BairroId)
-            .HasColumnName("BAI_NU")
+            .HasColumnName("bai_nu")
             .ValueGeneratedNever();
 
         builder.Property(b => b.Ordem)
-            .HasColumnName("VDB_NU")
+            .HasColumnName("vdb_nu")
             .ValueGeneratedNever();
 
         builder.Property(b => b.Denominacao)
-            .HasColumnName("VDB_TX")
+            .HasColumnName("vdb_tx")
             .IsRequired()
             .HasMaxLength(72);
     }
@@ -969,22 +967,788 @@ public class FaixaCepBairroConfiguration : IEntityTypeConfiguration<FaixaCepBair
         builder.HasKey(b => new { b.BairroId, b.CepInicial });
 
         builder.Property(b => b.BairroId)
-            .HasColumnName("BAI_NU")
+            .HasColumnName("bai_nu")
             .ValueGeneratedNever();
 
         builder.Property(b => b.CepInicial)
-            .HasColumnName("FCB_CEP_INI")
+            .HasColumnName("fcb_cep_ini")
             .IsRequired()
             .HasMaxLength(8);
 
         builder.Property(b => b.CepFinal)
-            .HasColumnName("FCB_CEP_FIM")
+            .HasColumnName("fcb_cep_fim")
             .IsRequired()
             .HasMaxLength(8);
     }
 }
 ```
 
+### Caixa Postal Comunitária (CPC)
+Arquivo: LOG_CPC.TXT
+Caixa Postal Comunitária(CPC) - são áreas rurais e/ou urbanas periféricas não atendidas pela distribuição domiciliária.
+
+| Campo        | Tipo         | Descrição                         |
+| :----------- | :----------- | :-------------------------------- |
+| CPC_NU       | NUMBER(8)    | Chave da caixa postal comunitária |
+| UFE_SG       | CHAR(2)      | Sigla da UF                       |
+| LOC_NU       | NUMBER(8)    | Chave da localidade               |
+| CPC_NO       | VARCHAR(72)  | Nome da CPC                       |
+| CPC_ENDERECO | VARCHAR(100) | Endereço da CPC                   |
+| CEP          | CHAR(8)      | CEP da CPC                        |
+
+Chave primária: CPC_NU
+
+```csharp title="Correios.DNEBasico.Domain/Entities/CaixaPostalComunitaria.cs"
+/// <summary>
+/// Caixa Postal Comunitária(CPC) - são áreas rurais e/ou urbanas periféricas não atendidas pela distribuição domiciliária.
+/// </summary>
+public class CaixaPostalComunitaria
+{
+    /// <summary>
+    /// chave da caixa postal comunitária
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// sigla da UF
+    /// </summary>
+    public string UF { get; set; } = default!;
+
+    /// <summary>
+    /// chave da localidade
+    /// </summary>
+    public int LocalidadeId { get; set; }
+
+    /// <summary>
+    /// nome da CPC
+    /// </summary>
+    public string Nome { get; set; } = default!;
+
+    /// <summary>
+    /// endereço da CPC
+    /// </summary>
+    public string Endereco { get; set; } = default!;
+
+    /// <summary>
+    /// CEP da CPC
+    /// </summary>
+    public string Cep { get; set; } = default!;
+
+    #region Navigation Properties
+    /// <summary>
+    /// Localidade
+    /// </summary>
+    public Localidade Localidade { get; set; } = default!;
+    #endregion
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/CaixaPostalComunitariaConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+
+public class CaixaPostalComunitariaConfiguration : IEntityTypeConfiguration<CaixaPostalComunitaria>
+{
+    public void Configure(EntityTypeBuilder<CaixaPostalComunitaria> builder)
+    {
+        builder.ToTable("caixas_postais_comunitarias");
+
+        builder.HasKey(c => c.Id);
+
+        builder.Property(c => c.Id)
+            .HasColumnName("cpc_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(c => c.UF)
+            .HasColumnName("ufe_sg")
+            .IsRequired()
+            .HasMaxLength(2);
+
+        builder.Property(c => c.LocalidadeId)
+            .HasColumnName("loc_nu")
+            .IsRequired();
+
+        builder.Property(c => c.Nome)
+            .HasColumnName("cpc_no")
+            .IsRequired()
+            .HasMaxLength(72);
+
+        builder.Property(c => c.Endereco)
+            .HasColumnName("cpc_endereco")
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(c => c.Cep)
+            .HasColumnName("cep")
+            .IsRequired()
+            .HasMaxLength(8);
+    }
+}
+```
+
+### Faixa de Caixa Postal Comunitária
+Arquivo: LOG_FAIXA_CPC.TXT
+Faixa de Caixa Postal Comunitária
+
+| Campo       | Tipo       | Descrição                                  |
+| :---------- | :--------- | :----------------------------------------- |
+| CPC_NU      | NUMBER(8)  | Chave da caixa postal comunitária          |
+| CPC_INICIAL | VARCHAR(6) | número inicial da caixa postal comunitária |
+| CPC_FINAL   | VARCHAR(6) | número final da caixa postal comunitária   |
+
+Chave primária: CPC_NU, CPC_INICIAL
+
+```csharp title="Correios.DNEBasico.Domain/Entities/FaixaCaixaPostalComunitaria.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Faixa de Caixa Postal Comunitária
+/// </summary>
+public class FaixaCaixaPostalComunitaria
+{
+    /// <summary>
+    /// chave da caixa postal comunitária
+    /// </summary>
+    public int CaixaPostalComunitariaId { get; set; }
+
+    /// <summary>
+    /// Caixa Postal Comunitária
+    /// </summary>
+    public CaixaPostalComunitaria CaixaPostalComunitaria { get; set; } = default!;
+
+    /// <summary>
+    /// número inicial da caixa postal comunitária
+    /// </summary>
+    public string CaixaPostalInicial { get; set; } = default!;
+
+    /// <summary>
+    /// número final da caixa postal comunitária
+    /// </summary>
+    public string CaixaPostalFinal { get; set; } = default!;
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCaixaPostalComunitariaConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+
+public class FaixaCaixaPostalComunitariaConfiguration : IEntityTypeConfiguration<FaixaCaixaPostalComunitaria>
+{
+    public void Configure(EntityTypeBuilder<FaixaCaixaPostalComunitaria> builder)
+    {
+        builder.ToTable("faixas_caixa_postal_comunitaria");
+
+        builder.HasKey(f => new { f.CaixaPostalComunitariaId, f.CaixaPostalInicial });
+
+        builder.Property(f => f.CaixaPostalComunitariaId)
+            .HasColumnName("cpc_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(f => f.CaixaPostalInicial)
+            .HasColumnName("cpc_inicial")
+            .IsRequired()
+            .HasMaxLength(6);
+
+        builder.Property(f => f.CaixaPostalFinal)
+            .HasColumnName("cpc_final")
+            .IsRequired()
+            .HasMaxLength(6);
+    }
+}
+
+```
+
+Nossa próxima parada: a tabela de logradouros! Mas antes vamos dar uma olhada em como está o nosso diagrama entidade-relacionamento (ER) até agora:
+
+```mermaid
+---
+title: Entidades do DNE Básico
+caption: Diagrama Entidade-Relacionamento (ER) das tabelas do DNE Básico
+---
+erDiagram
+    direction LR
+
+    UFS {  }
+    FAIXAS_CEP_UF {}
+    LOCALIDADES {}
+    VARIACOES_LOCALIDADE {}
+    FAIXAS_CEP_LOCALIDADE {}
+    BAIRROS {}
+    VARIACOES_BAIRRO {}
+    FAIXAS_CEP_BAIRRO {}
+    CAIXAS_POSTAIS_COMUNITARIAS {}
+    FAIXAS_CAIXA_POSTAL_COMUNITARIA {}
+
+    UFS ||--o{ FAIXAS_CEP_UF : ""
+    UFS ||--o{ LOCALIDADES : ""
+    LOCALIDADES ||--o{ LOCALIDADES : ""
+    LOCALIDADES ||--o{ VARIACOES_LOCALIDADE : ""
+    LOCALIDADES ||--o{ FAIXAS_CEP_LOCALIDADE : ""
+    LOCALIDADES ||--o{ BAIRROS : ""
+    BAIRROS ||--o{ VARIACOES_BAIRRO : ""
+    BAIRROS ||--o{ FAIXAS_CEP_BAIRRO : ""
+    LOCALIDADES ||--o{ CAIXAS_POSTAIS_COMUNITARIAS : ""
+    CAIXAS_POSTAIS_COMUNITARIAS ||--o{ FAIXAS_CAIXA_POSTAL_COMUNITARIA : ""
+```
+
+### Logradouros
+Arquivos: LOG_LOGRADOURO_XX.TXT
+Logradouro, onde XX representa a sigla da UF. 
+Para cada UF é disponibilizado um arquivo distinto. Cada arquivo contém os registros das localidades codificadas por logradouro(LOC_IN_SIT=1) e de localidades em fase de codificação(LOC_IN_SIT=3). Para encontrar o bairro do logradouro, utilize o campo BAI_NU_INI(relacionamento com LOG_BAIRRO, campo BAI_NU)
+
+| Campo           | Tipo         | Descrição                                                         |
+| :-------------- | :----------- | :---------------------------------------------------------------- |
+| LOG_NU          | NUMBER(8)    | Chave do logradouro                                               |
+| UFE_SG          | CHAR(2)      | Sigla da UF                                                       |
+| LOC_NU          | NUMBER(8)    | Chave da localidade                                               |
+| BAI_NU_INI      | NUMBER(8)    | Chave do bairro inicial do logradouro                             |
+| BAI_NU_FIM      | NUMBER(8)    | Chave do bairro final do logradouro (opcional)                    |
+| LOG_NO          | VARCHAR(100) | Nome do logradouro                                                |
+| LOG_COMPLEMENTO | VARCHAR(100) | Complemento do logradouro (opcional)                              |
+| CEP             | CHAR(8)      | CEP do logradouro                                                 |
+| TLO_TX          | VARCHAR(36)  | Tipo de logradouro                                                |
+| LOG_STA_TLO     | CHAR(1)      | Indicador de utilização do tipo de logradouro (S ou N) (opcional) |
+| LOG_NO_ABREV    | VARCHAR(36)  | Abreviatura do nome do logradouro (opcional)                      |
+
+Chave primária: LOG_NU
+
+```csharp title="Correios.DNEBasico.Domain/Entities/Logradouro.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Logradouro
+/// </summary>
+/// <remarks>
+/// Este arquivo contém os registros das localidades codificadas 
+/// por logradouro(LOC_IN_SIT=1) e de localidades em fase de 
+/// codificação(LOC_IN_SIT=3). Para encontrar o bairro do logradouro, 
+/// utilize o campo BAI_NU_INI (relacionamento com LOG_BAIRRO, campo BAI_NU).
+/// </remarks>
+public class Logradouro
+{
+    /// <summary>
+    /// Chave do logradouro
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Sigla da UF
+    /// </summary>
+    public string UF { get; set; } = default!;
+
+    /// <summary>
+    /// Chave da localidade
+    /// </summary>
+    public int LocalidadeId { get; set; }
+
+    /// <summary>
+    /// Chave do bairro inicial do logradouro
+    /// </summary>
+    public int BairroId { get; set; }
+
+    /// <summary>
+    /// Nome do logradouro
+    /// </summary>
+    public string Nome { get; set; } = default!;
+
+    /// <summary>
+    /// Complemento do logradouro (opcional)
+    /// </summary>
+    public string? Complemento { get; set; }
+
+    /// <summary>
+    /// CEP do logradouro
+    /// </summary>
+    public string Cep { get; set; } = default!;
+
+    /// <summary>
+    /// Tipo de logradouro
+    /// </summary>
+    public string Tipo { get; set; } = default!;
+
+    /// <summary>
+    /// Indicador de utilização do tipo de logradouro
+    /// (S ou N) (opcional)
+    /// </summary>
+    public string? StatusTipo { get; set; }
+
+    /// <summary>
+    /// Abreviatura do nome do logradouro (opcional)
+    /// </summary>
+    public string? NomeAbreviado { get; set; }
+
+    #region Navigation Properties
+    /// <summary>
+    /// Localidade
+    /// </summary>
+    public Localidade Localidade { get; set; } = default!;
+
+    /// <summary>
+    /// Bairro do logradouro
+    /// </summary>
+    public Bairro Bairro { get; set; } = default!;
+    #endregion
+}
+
+```
+
+Algumas considerações sobre o arquivo de logradouros:
+- Campo BAI_NU_FIM: Apesar de o arquivo ainda conter esse campo, ele não é utilizado na prática, pois está marcado para ser desativado em futuras atualizações do DNE Básico.
+- Tipo de logradouro (TLO_TX): Este campo é uma string que descreve o tipo de logradouro, como "Rua", "Avenida", "Travessa", etc. No entanto, não há uma enumeração (ou tabela) oficial fornecida pelos Correios para esses tipos. Portanto, por enquanto, estamos mantendo esse campo como uma string simples.
+- StatusTipo (LOG_STA_TLO): Este campo indica se o tipo de logradouro está em uso ou não, com valores possíveis "S" (Sim) ou "N" (Não). Ele é opcional e pode ser nulo. Decidi mantê-lo como uma string nullable com um caractere, para refletir exatamente o que está nos arquivos.
+
+```csharp title="Correios.DNEBasico.Data/Configurations/LogradouroConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class LogradouroConfiguration : IEntityTypeConfiguration<Logradouro>
+{
+    public void Configure(EntityTypeBuilder<Logradouro> builder)
+    {
+        builder.ToTable("logradouros");
+
+        builder.HasKey(l => l.Id);
+
+        builder.Property(l => l.Id)
+            .HasColumnName("log_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(l => l.UF)
+            .HasColumnName("ufe_sg")
+            .IsRequired()
+            .HasMaxLength(2);
+
+        builder.Property(l => l.LocalidadeId)
+            .HasColumnName("loc_nu")
+            .IsRequired();
+
+        builder.Property(l => l.BairroId)
+            .HasColumnName("bai_nu_ini")
+            .IsRequired();
+
+        builder.Property(l => l.Nome)
+            .HasColumnName("log_no")
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(l => l.Complemento)
+            .HasColumnName("log_complemento")
+            .HasMaxLength(100);
+
+        builder.Property(l => l.Cep)
+            .HasColumnName("cep")
+            .IsRequired()
+            .HasMaxLength(8);
+
+        builder.Property(l => l.Tipo)
+            .HasColumnName("tlo_tx")
+            .IsRequired()
+            .HasMaxLength(36);
+
+        builder.Property(l => l.StatusTipo)
+            .HasColumnName("log_sta_tlo")
+            .HasMaxLength(1);
+
+        builder.Property(l => l.NomeAbreviado)
+            .HasColumnName("log_no_abrev")
+            .HasMaxLength(36);
+    }
+}
+```
+
+### Outras denominações de logradouros
+Arquivo: LOG_VAR_LOG.TXT
+Outras denominações do logradouro (denominação popular, denominação anterior)
+
+| Campo  | Tipo         | Descrição                      |
+| :----- | :----------- | :----------------------------- |
+| LOG_NU | NUMBER(8)    | Chave do logradouro            |
+| VLO_NU | NUMBER(8)    | Ordem da denominação           |
+| TLO_TX | VARCHAR2(36) | Tipo de logradouro da variação |
+| VLO_TX | VARCHAR(150) | Denominação                    |
+
+Chave primária: LOG_NU, VLO_NU
+
+```csharp title="Correios.DNEBasico.Domain/Entities/VariacaoLogradouro.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Outras denominações do logradouro
+/// (denominação popular, denominação anterior)
+/// </summary>
+public class VariacaoLogradouro
+{
+    /// <summary>
+    /// chave do logradouro
+    /// </summary>
+    public int LogradouroId { get; set; }
+
+    /// <summary>
+    /// ordem da denominação
+    /// </summary>
+    public int Ordem { get; set; }
+
+    /// <summary>
+    /// tipo de logradouro da variação
+    /// </summary>
+    public string Tipo { get; set; } = default!;
+
+    /// <summary>
+    /// nome da variação do logradouro
+    /// </summary>
+    public string Denominacao { get; set; } = default!;
+
+    #region Navigation Properties
+    /// <summary>
+    /// Logradouro 
+    /// </summary>
+    public Logradouro Logradouro { get; set; } = default!;
+    #endregion
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/VariacaoLogradouroConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class VariacaoLogradouroConfiguration : IEntityTypeConfiguration<VariacaoLogradouro>
+{
+    public void Configure(EntityTypeBuilder<VariacaoLogradouro> builder)
+    {
+        builder.ToTable("variacoes_logradouro");
+
+        builder.HasKey(b => new { b.LogradouroId, b.Ordem });
+
+        builder.Property(b => b.LogradouroId)
+            .HasColumnName("log_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(b => b.Ordem)
+            .HasColumnName("vlo_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(b => b.Tipo)
+            .HasColumnName("tlo_tx")
+            .IsRequired()
+            .HasMaxLength(36);
+
+        builder.Property(b => b.Denominacao)
+            .HasColumnName("vlo_tx")
+            .IsRequired()
+            .HasMaxLength(150);
+    }
+}
+```
+
+### Faixa numérica do seccionamento
+Arquivo: LOG_NUM_SEC.TXT
+Faixa numérica do seccionamento
+
+| Campo       | Tipo        | Descrição                                                                                                              |
+| :---------- | :---------- | :--------------------------------------------------------------------------------------------------------------------- |
+| LOG_NU      | NUMBER(8)   | Chave do logradouro                                                                                                    |
+| SEC_NU_INI  | VARCHAR(10) | Número inicial do seccionmento                                                                                         |
+| SEC_NU_FIM  | VARCHAR(10) | Número final do seccionmento                                                                                           |
+| SEC_IN_LADO | CHAR(1)     | Indica a paridade/lado do seccionamento<br/>A – ambos,<br/>P – par,<br/>I – ímpar,<br/>D – direito e<br/>E – esquerdo. |
+
+Chave primária: LOG_NU
+
+Vamos criar uma enum para o campo `SEC_IN_LADO`:
+
+```csharp title="Correios.DNEBasico.Domain/Enums/ParidadeLadoSeccionamento.cs"
+using System.ComponentModel;
+
+namespace Correios.DneBasico.Domain.Enums;
+
+/// <summary>
+/// Paridade / Lado do seccionamento
+/// </summary>
+public enum ParidadeLadoSeccionamento
+{
+    /// <summary>
+    /// Ambos
+    /// </summary>
+    [Description("Ambos")]
+    AMBOS = 1,
+
+    /// <summary>
+    /// Par
+    /// </summary>
+    [Description("Par")]
+    PAR = 2,
+
+    /// <summary>
+    /// Ímpar
+    /// </summary>
+    [Description("Ímpar")]
+    IMPAR = 3,
+
+    /// <summary>
+    /// Direito
+    /// </summary>
+    [Description("Direito")]
+    DIREITO = 4,
+
+    /// <summary>
+    /// Esquerdo
+    /// </summary>
+    [Description("Esquerdo")]
+    ESQUERDO = 5,
+}
+```
+
+```csharp title="Correios.DNEBasico.Domain/Entities/FaixaNumericaSeccionamento.cs"
+using Correios.DneBasico.Domain.Enums;
+
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Faixa numérica do seccionamento
+/// </summary>
+public class FaixaNumericaSeccionamento
+{
+    /// <summary>
+    /// chave do logradouro
+    /// </summary>
+    public int LogradouroId { get; set; }
+
+    /// <summary>
+    /// número inicial do seccionamento
+    /// </summary>
+    public string SeccionamentoInicial { get; set; } = default!;
+
+    /// <summary>
+    /// número final do seccionamento
+    /// </summary>
+    public string SeccionamentoFinal { get; set; } = default!;
+
+    /// <summary>
+    /// Indica a paridade/lado do seccionamento
+    /// </summary>
+    /// <remarks>
+    /// A – ambos,
+    /// P – par,
+    /// I – ímpar,
+    /// D – direito e
+    /// E – esquerdo.
+    /// </remarks>
+    public ParidadeLadoSeccionamento ParidadeLado { get; set; } = default!;
+
+    #region Navigation Properties
+    /// <summary>
+    /// Logradouro
+    /// </summary>
+    public Logradouro Logradouro { get; set; } = default!;
+    #endregion
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/FaixaNumericaSeccionamentoConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class FaixaNumericaSeccionamentoConfiguration : IEntityTypeConfiguration<FaixaNumericaSeccionamento>
+{
+    public void Configure(EntityTypeBuilder<FaixaNumericaSeccionamento> builder)
+    {
+        builder.ToTable("faixas_numericas_seccionamento");
+
+        builder.HasKey(x => x.LogradouroId);
+
+        builder.Property(x => x.LogradouroId)
+            .HasColumnName("log_nu")
+            .ValueGeneratedNever()
+            .IsRequired();
+
+        builder.HasOne(x => x.Logradouro)
+            .WithOne()
+            .HasForeignKey<FaixaNumericaSeccionamento>(x => x.LogradouroId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Property(x => x.SeccionamentoInicial)
+            .HasColumnName("sec_nu_ini")
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(x => x.SeccionamentoFinal)
+            .HasColumnName("sec_nu_fim")
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(x => x.ParidadeLado)
+            .HasColumnName("sec_in_lado")
+            .IsRequired()
+            .HasMaxLength(1);
+    }
+}
+```
+
+### Grandes usuários
+Arquivo: LOG_GRANDE_USUARIO.TXT
+São clientes com grande volume postal (empresas, universidades, bancos, órgãos públicos, etc), O campo LOG_NU está sem conteúdo para as localidades não codificadas(LOC_IN_SIT=0), devendo ser utilizado o campo GRU_ENDEREÇO para  endereçamento.
+
+| Campo        | Tipo         | Descrição                                        |
+| :----------- | :----------- | :----------------------------------------------- |
+| GRU_NU       | NUMBER(8)    | Chave do grande usuário                          |
+| UFE_SG       | CHAR(2)      | Sigla da UF                                      |
+| LOC_NU       | NUMBER(8)    | Chave da localidade                              |
+| BAI_NU       | NUMBER(8)    | Chave do bairro                                  |
+| LOG_NU       | NUMBER(8)    | Chave do logradouro (opcional)                   |
+| GRU_NO       | VARCHAR(72)  | Nome do grande usuário                           |
+| GRU_ENDERECO | VARCHAR(100) | Endereço do grande usuário                       |
+| CEP          | CHAR(8)      | CEP do grande usuário                            |
+| GRU_NO_ABREV | VARCHAR(36)  | Abreviatura do nome do grande usuário (opcional) |
+
+Chave primária: GRU_NU
+
+```csharp title="Correios.DNEBasico.Domain/Entities/GrandeUsuario.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Grande Usuário
+/// </summary>
+/// <remarks>
+/// São clientes com grande volume postal (empresas, universidades, 
+/// bancos, órgãos públicos, etc), O campo LOG_NU está sem conteúdo 
+/// para as localidades não codificadas(LOC_IN_SIT=0), devendo ser 
+/// utilizado o campo GRU_ENDERECO para  endereçamento.
+/// </remarks>
+public class GrandeUsuario
+{
+    /// <summary>
+    /// chave do grande usuário
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// sigla da UF
+    /// </summary>
+    public string UF { get; set; } = default!;
+
+    /// <summary>
+    /// chave da localidade
+    /// </summary>
+    public int LocalidadeId { get; set; }
+
+    /// <summary>
+    /// chave do bairro
+    /// </summary>
+    public int BairroId { get; set; }
+
+    /// <summary>
+    /// chave do logradouro (opcional)
+    /// </summary>
+    public int? LogradouroId { get; set; }
+
+    /// <summary>
+    /// nome do grande usuário
+    /// </summary>
+    public string Nome { get; set; } = default!;
+
+    /// <summary>
+    /// endereço do grande usuário
+    /// </summary>
+    public string Endereco { get; set; } = default!;
+
+    /// <summary>
+    /// CEP do grande usuário
+    /// </summary>
+    public string Cep { get; set; } = default!;
+
+    /// <summary>
+    /// abreviatura do nome do grande usuário (opcional)
+    /// </summary>
+    public string? NomeAbreviado { get; set; }
+
+    #region Navigation Properties
+    /// <summary>
+    /// Localidade
+    /// </summary>
+    public Localidade Localidade { get; set; } = default!;
+
+    /// <summary>
+    /// Bairro
+    /// </summary>
+    public Bairro Bairro { get; set; } = default!;
+
+    /// <summary>
+    /// Logradouro
+    /// </summary>
+    public Logradouro? Logradouro { get; set; }
+    #endregion
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/GrandeUsuarioConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class GrandeUsuarioConfiguration : IEntityTypeConfiguration<GrandeUsuario>
+{
+    public void Configure(EntityTypeBuilder<GrandeUsuario> builder)
+    {
+        builder.ToTable("grandes_usuarios");
+
+        builder.HasKey(g => g.Id);
+
+        builder.Property(g => g.Id)
+            .HasColumnName("gru_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(g => g.UF)
+            .HasColumnName("ufe_sg")
+            .IsRequired()
+            .HasMaxLength(2);
+
+        builder.Property(g => g.LocalidadeId)
+            .HasColumnName("loc_nu")
+            .IsRequired();
+
+        builder.Property(g => g.BairroId)
+            .HasColumnName("bai_nu")
+            .IsRequired();
+
+        builder.Property(g => g.LogradouroId)
+            .HasColumnName("log_nu");
+
+        builder.Property(g => g.Nome)
+            .HasColumnName("gru_no")
+            .IsRequired()
+            .HasMaxLength(72);
+
+        builder.Property(g => g.Endereco)
+            .HasColumnName("gru_endereco")
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(g => g.Cep)
+            .HasColumnName("cep")
+            .IsRequired()
+            .HasMaxLength(8);
+
+        builder.Property(g => g.NomeAbreviado)
+            .HasColumnName("gru_no_abrev")
+            .HasMaxLength(36);
+    }
+}
+```
+
+## Futuras melhorias
+- Converter os diferentes "tipos de logradouros" para uma enumeração e/ou tabela separada.
 
 
 ## Referências

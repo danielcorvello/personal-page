@@ -420,10 +420,20 @@ public class Localidade
 
 
     #region Navigation Properties
-
+    /// <summary>
+    /// Estado (UF)
+    /// </summary>
     public Estado Estado { get; set; } = default!;
 
+    /// <summary>
+    /// Localidade de subordinação
+    /// </summary>
     public Localidade? Subordinada { get; set; } = default!;
+
+    /// <summary>
+    /// Variações da Localidade
+    /// </summary>
+    public ICollection<VariacaoLocalidade> Variacoes { get; set; } = [];
     #endregion
 }
 ```
@@ -491,31 +501,31 @@ Até agora temos a seguinte estrutura de tabelas no banco de dados:
 
 ```mermaid
 erDiagram
-    UFS {
-        CHAR(2) UFE_SG PK "Sigla da Unidade Federativa (UF)"
-        VARCHAR(19) UFE_NO "Nome da Unidade Federativa (UF)"
-        CHAR(2) UFE_NU "Código IBGE da Unidade Federativa (UF)"
+    estados {
+        CHAR(2) ufe_sg PK "Sigla da Unidade Federativa (UF)"
+        VARCHAR(19) ufe_no "Nome da Unidade Federativa (UF)"
+        CHAR(2) ufe_nu "Código IBGE da Unidade Federativa (UF)"
     }
-    FAIXAS_CEP_UF {
-        CHAR(2) UFE_SG PK "Sigla da Unidade Federativa (UF)"
-        CHAR(8) UFE_CEP_INI PK "CEP inicial da UF"
-        CHAR(8) UFE_CEP_FIM "CEP final da UF"
+    faixas_cep_uf {
+        CHAR(2) ufe_sg PK "Sigla da Unidade Federativa (UF)"
+        CHAR(8) ufe_cep_ini PK "CEP inicial da UF"
+        CHAR(8) ufe_cep_fim "CEP final da UF"
     }
-    LOCALIDADES {
-        NUMBER LOC_NU PK "Chave da localidade"
-        CHAR(2) UFE_SG FK "Sigla da UF"
-        VARCHAR(72) LOC_NO "Nome da localidade"
-        CHAR(8) CEP "CEP da localidade"
-        NUMBER LOC_IN_SIT "Situação da localidade"
-        NUMBER LOC_IN_TIPO_LOC "Tipo de localidade"
-        NUMBER LOC_NU_SUB FK "Chave da localidade de subordinação"
-        VARCHAR(36) LOC_NO_ABREV "Abreviatura do nome da localidade"
-        CHAR(7) MUN_NU "Código do município IBGE"
+    localidades {
+        NUMBER loc_nu PK "Chave da localidade"
+        CHAR(2) ufe_sg FK "Sigla da UF"
+        VARCHAR(72) loc_no "Nome da localidade"
+        CHAR(8) cep "CEP da localidade"
+        NUMBER loc_in_sit "Situação da localidade"
+        NUMBER loc_in_tipo_loc "Tipo de localidade"
+        NUMBER loc_nu_sub FK "Chave da localidade de subordinação"
+        VARCHAR(36) loc_no_abrev "Abreviatura do nome da localidade"
+        CHAR(7) mun_nu "Código do município IBGE"
     }
 
-    UFS ||--o{ FAIXAS_CEP_UF : "possui"
-    UFS ||--o{ LOCALIDADES : "possui"
-    LOCALIDADES ||--o{ LOCALIDADES : "subordina a"
+    estados ||--o{ faixas_cep_uf : "possui"
+    estados ||--o{ localidades : "possui"
+    localidades ||--o{ localidades : "subordina a"
 ```
 
 
@@ -984,7 +994,7 @@ public class FaixaCepBairroConfiguration : IEntityTypeConfiguration<FaixaCepBair
 ```
 
 ### Caixa Postal Comunitária (CPC)
-Arquivo: LOG_CPC.TXT
+Arquivo: LOG_CPC.TXT  
 Caixa Postal Comunitária(CPC) - são áreas rurais e/ou urbanas periféricas não atendidas pela distribuição domiciliária.
 
 | Campo        | Tipo         | Descrição                         |
@@ -1090,7 +1100,7 @@ public class CaixaPostalComunitariaConfiguration : IEntityTypeConfiguration<Caix
 ```
 
 ### Faixa de Caixa Postal Comunitária
-Arquivo: LOG_FAIXA_CPC.TXT
+Arquivo: LOG_FAIXA_CPC.TXT  
 Faixa de Caixa Postal Comunitária
 
 | Campo       | Tipo       | Descrição                                  |
@@ -1115,11 +1125,6 @@ public class FaixaCaixaPostalComunitaria
     public int CaixaPostalComunitariaId { get; set; }
 
     /// <summary>
-    /// Caixa Postal Comunitária
-    /// </summary>
-    public CaixaPostalComunitaria CaixaPostalComunitaria { get; set; } = default!;
-
-    /// <summary>
     /// número inicial da caixa postal comunitária
     /// </summary>
     public string CaixaPostalInicial { get; set; } = default!;
@@ -1128,6 +1133,13 @@ public class FaixaCaixaPostalComunitaria
     /// número final da caixa postal comunitária
     /// </summary>
     public string CaixaPostalFinal { get; set; } = default!;
+
+    #region Navigation Properties
+    /// <summary>
+    /// Caixa Postal Comunitária
+    /// </summary>
+    public CaixaPostalComunitaria CaixaPostalComunitaria { get; set; } = default!;
+    #endregion
 }
 ```
 
@@ -1174,31 +1186,31 @@ caption: Diagrama Entidade-Relacionamento (ER) das tabelas do DNE Básico
 erDiagram
     direction LR
 
-    UFS {  }
-    FAIXAS_CEP_UF {}
-    LOCALIDADES {}
-    VARIACOES_LOCALIDADE {}
-    FAIXAS_CEP_LOCALIDADE {}
-    BAIRROS {}
-    VARIACOES_BAIRRO {}
-    FAIXAS_CEP_BAIRRO {}
-    CAIXAS_POSTAIS_COMUNITARIAS {}
-    FAIXAS_CAIXA_POSTAL_COMUNITARIA {}
+    estados {  }
+    faixas_cep_uf {}
+    localidades {}
+    variacoes_localidade {}
+    faixas_cep_localidade {}
+    bairros {}
+    variacoes_bairro {}
+    faixas_cep_bairro {}
+    caixas_postais_comunitarias {}
+    faixas_caixa_postal_comunitaria {}
 
-    UFS ||--o{ FAIXAS_CEP_UF : ""
-    UFS ||--o{ LOCALIDADES : ""
-    LOCALIDADES ||--o{ LOCALIDADES : ""
-    LOCALIDADES ||--o{ VARIACOES_LOCALIDADE : ""
-    LOCALIDADES ||--o{ FAIXAS_CEP_LOCALIDADE : ""
-    LOCALIDADES ||--o{ BAIRROS : ""
-    BAIRROS ||--o{ VARIACOES_BAIRRO : ""
-    BAIRROS ||--o{ FAIXAS_CEP_BAIRRO : ""
-    LOCALIDADES ||--o{ CAIXAS_POSTAIS_COMUNITARIAS : ""
-    CAIXAS_POSTAIS_COMUNITARIAS ||--o{ FAIXAS_CAIXA_POSTAL_COMUNITARIA : ""
+    estados ||--o{ faixas_cep_uf : ""
+    estados ||--o{ localidades : ""
+    localidades ||--o{ localidades : ""
+    localidades ||--o{ variacoes_localidade : ""
+    localidades ||--o{ faixas_cep_localidade : ""
+    localidades ||--o{ bairros : ""
+    bairros ||--o{ variacoes_bairro : ""
+    bairros ||--o{ faixas_cep_bairro : ""
+    localidades ||--o{ caixas_postais_comunitarias : ""
+    caixas_postais_comunitarias ||--o{ faixas_caixa_postal_comunitaria : ""
 ```
 
 ### Logradouros
-Arquivos: LOG_LOGRADOURO_XX.TXT
+Arquivos: LOG_LOGRADOURO_XX.TXT  
 Logradouro, onde XX representa a sigla da UF. 
 Para cada UF é disponibilizado um arquivo distinto. Cada arquivo contém os registros das localidades codificadas por logradouro(LOC_IN_SIT=1) e de localidades em fase de codificação(LOC_IN_SIT=3). Para encontrar o bairro do logradouro, utilize o campo BAI_NU_INI(relacionamento com LOG_BAIRRO, campo BAI_NU)
 
@@ -1298,7 +1310,7 @@ public class Logradouro
 
 ```
 
-Algumas considerações sobre o arquivo de logradouros:
+Algumas considerações sobre o arquivo de logradouros:  
 - Campo BAI_NU_FIM: Apesar de o arquivo ainda conter esse campo, ele não é utilizado na prática, pois está marcado para ser desativado em futuras atualizações do DNE Básico.
 - Tipo de logradouro (TLO_TX): Este campo é uma string que descreve o tipo de logradouro, como "Rua", "Avenida", "Travessa", etc. No entanto, não há uma enumeração (ou tabela) oficial fornecida pelos Correios para esses tipos. Portanto, por enquanto, estamos mantendo esse campo como uma string simples.
 - StatusTipo (LOG_STA_TLO): Este campo indica se o tipo de logradouro está em uso ou não, com valores possíveis "S" (Sim) ou "N" (Não). Ele é opcional e pode ser nulo. Decidi mantê-lo como uma string nullable com um caractere, para refletir exatamente o que está nos arquivos.
@@ -1365,7 +1377,7 @@ public class LogradouroConfiguration : IEntityTypeConfiguration<Logradouro>
 ```
 
 ### Outras denominações de logradouros
-Arquivo: LOG_VAR_LOG.TXT
+Arquivo: LOG_VAR_LOG.TXT  
 Outras denominações do logradouro (denominação popular, denominação anterior)
 
 | Campo  | Tipo         | Descrição                      |
@@ -1451,7 +1463,7 @@ public class VariacaoLogradouroConfiguration : IEntityTypeConfiguration<Variacao
 ```
 
 ### Faixa numérica do seccionamento
-Arquivo: LOG_NUM_SEC.TXT
+Arquivo: LOG_NUM_SEC.TXT  
 Faixa numérica do seccionamento
 
 | Campo       | Tipo        | Descrição                                                                                                              |
@@ -1596,7 +1608,7 @@ public class FaixaNumericaSeccionamentoConfiguration : IEntityTypeConfiguration<
 ```
 
 ### Grandes usuários
-Arquivo: LOG_GRANDE_USUARIO.TXT
+Arquivo: LOG_GRANDE_USUARIO.TXT  
 São clientes com grande volume postal (empresas, universidades, bancos, órgãos públicos, etc), O campo LOG_NU está sem conteúdo para as localidades não codificadas(LOC_IN_SIT=0), devendo ser utilizado o campo GRU_ENDEREÇO para  endereçamento.
 
 | Campo        | Tipo         | Descrição                                        |
@@ -1747,9 +1759,465 @@ public class GrandeUsuarioConfiguration : IEntityTypeConfiguration<GrandeUsuario
 }
 ```
 
+### Unidade Operacional dos Correios
+Arquivo: LOG_UNID_OPER.TXT  
+São agências próprias ou terceirizadas, centros de distribuição, etc. O campo LOG_NU está sem conteúdo para as localidades não codificadas(LOC_IN_SIT=0), devendo ser utilizado o campo UOP_ENDEREÇO para endereçamento.
+
+| Campo        | Tipo         | Descrição                                           |
+| :----------- | :----------- | :-------------------------------------------------- |
+| UOP_NU       | NUMBER(8)    | Chave da UOP                                        |
+| UFE_SG       | CHAR(2)      | Sigla da UF                                         |
+| LOC_NU       | NUMBER(8)    | Chave da localidade                                 |
+| BAI_NU       | NUMBER(8)    | Chave do bairro                                     |
+| LOG_NU       | NUMBER(8)    | Chave do logradouro (opcional)                      |
+| UOP_NO       | VARCHAR(100) | Nome da UOP                                         |
+| UOP_ENDERECO | VARCHAR(100) | Endereço da UOP                                     |
+| CEP          | CHAR(8)      | CEP da UOP                                          |
+| UOP_IN_CP    | CHAR(1)      | Indicador de caixa postal (S ou N)                  |
+| UOP_NO_ABREV | VARCHAR(36)  | Abreviatura do nome da unid. operacional (opcional) |
+
+Chave primária: UOP_NU
+
+```csharp title="Correios.DNEBasico.Domain/Entities/UnidadeOperacional.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Unidade Operacional dos Correios
+/// </summary>
+/// <remarks>
+/// São agências próprias ou terceirizadas, centros de distribuição, etc. O campo LOG_NU está sem conteúdo para as localidades não codificadas(LOC_IN_SIT=0), devendo ser utilizado o campo UOP_ENDEREÇO para endereçamento.
+/// </remarks>
+public class UnidadeOperacional
+{
+    /// <summary>
+    /// chave da UOP
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// sigla da UF
+    /// </summary>
+    public string UF { get; set; } = default!;
+
+    /// <summary>
+    /// chave da localidade
+    /// </summary>
+    public int LocalidadeId { get; set; }
+
+    /// <summary>
+    /// chave do bairro
+    /// </summary>
+    public int BairroId { get; set; }
+
+    /// <summary>
+    /// chave do logradouro (opcional)
+    /// </summary>
+    public int? LogradouroId { get; set; }
+
+
+    /// <summary>
+    /// nome da UOP
+    /// </summary>
+    public string Nome { get; set; } = default!;
+
+    /// <summary>
+    /// endereço da UOP
+    /// </summary>
+    public string Endereco { get; set; } = default!;
+
+    /// <summary>
+    /// CEP da UOP
+    /// </summary>
+    public string Cep { get; set; } = default!;
+
+    /// <summary>
+    /// indicador de caixa postal (S ou N)
+    /// </summary>
+    public string CaixasPostais { get; set; } = default!;
+
+    /// <summary>
+    /// abreviatura do nome da unid. operacional (opcional)
+    /// </summary>
+    public string? NomeAbreviado { get; set; }
+
+    #region Navigation Properties
+    /// <summary>
+    /// Estado
+    /// </summary>
+    public Estado Estado { get; set; } = default!;
+    /// <summary>
+    /// Localidade
+    /// </summary>
+    public Localidade Localidade { get; set; } = default!;
+
+    /// <summary>
+    /// Bairro
+    /// </summary>
+    public Bairro Bairro { get; set; } = default!;
+
+    /// <summary>
+    /// Logradouro
+    /// </summary>
+    public Logradouro? Logradouro { get; set; }
+    #endregion
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/UnidadeOperacionalConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class UnidadeOperacionalConfiguration : IEntityTypeConfiguration<UnidadeOperacional>
+{
+    public void Configure(EntityTypeBuilder<UnidadeOperacional> builder)
+    {
+        builder.ToTable("unidades_operacionais");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("uop_nu")
+            .IsRequired();
+
+        builder.Property(x => x.Uf)
+            .HasColumnName("ufe_sg")
+            .IsRequired().HasMaxLength(2);
+
+        builder.Property(x => x.LocalidadeId)
+            .HasColumnName("loc_nu")
+            .IsRequired();
+
+        builder.Property(x => x.BairroId)
+            .HasColumnName("bai_nu")
+            .IsRequired();
+
+        builder.Property(x => x.LogradouroId)
+            .HasColumnName("log_nu");
+
+        builder.Property(x => x.Nome)
+            .HasColumnName("uop_no")
+            .IsRequired().HasMaxLength(100);
+
+        builder.Property(x => x.Endereco)
+            .HasColumnName("uop_endereco")
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(x => x.Cep)
+            .HasColumnName("cep")
+            .IsRequired()
+            .HasMaxLength(8);
+
+        builder.Property(x => x.CaixasPostais)
+            .HasColumnName("uop_in_cp")
+            .IsRequired()
+            .HasMaxLength(1);
+
+        builder.Property(x => x.NomeAbreviado)
+            .HasColumnName("uop_no_abrev")
+            .HasMaxLength(36);
+
+        builder.HasOne(x => x.Estado)
+            .WithMany()
+            .HasForeignKey(x => x.Uf)
+            .HasPrincipalKey(x => x.Uf);
+    }
+}
+```
+
+### Faixa de Caixa Postal - UOP
+Arquivo: LOG_FAIXA_UOP.TXT  
+Faixa de Caixa Postal - UOP
+
+| Campo       | Tipo      | Descrição                      |
+| :---------- | :-------- | :----------------------------- |
+| UOP_NU      | NUMBER(8) | Chave da UOP                   |
+| FNC_INICIAL | NUMBER(8) | Número inicial da caixa postal |
+| FNC_FINAL   | NUMBER(8) | Número final da caixa postal   |
+
+Chave primária: UOP_NU, FNC_INICIAL
+
+```csharp title="Correios.DNEBasico.Domain/Entities/FaixaCaixaPostalUop.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Faixa de Caixa Postal – UOP
+/// </summary>
+public class FaixaCaixaPostalUop
+{
+    /// <summary>
+    /// chave da UOP
+    /// </summary>
+    public int UnidadeOperacionalId { get; set; }
+
+    /// <summary>
+    /// número inicial da caixa postal
+    /// </summary>
+    public string CaixaPostalInicial { get; set; } = default!;
+
+    /// <summary>
+    /// número final da caixa postal
+    /// </summary>
+    public string CaixaPostalFinal { get; set; } = default!;
+
+    #region Navigation Properties
+    public UnidadeOperacional UnidadeOperacional { get; set; } = default!;
+    #endregion
+
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCaixaPostalUopConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class FaixaCaixaPostalUopConfiguration : IEntityTypeConfiguration<FaixaCaixaPostalUop>
+{
+    public void Configure(EntityTypeBuilder<FaixaCaixaPostalUop> builder)
+    {
+        builder.ToTable("faixas_caixa_postal_uop");
+
+        builder.HasKey(f => new { f.UnidadeOperacionalId, f.CaixaPostalInicial });
+
+        builder.Property(f => f.UnidadeOperacionalId)
+            .HasColumnName("uop_nu")
+            .ValueGeneratedNever();
+
+        builder.Property(f => f.CaixaPostalInicial)
+            .HasColumnName("fnc_inicial")
+            .IsRequired()
+            .HasMaxLength(8);
+
+        builder.Property(f => f.CaixaPostalFinal)
+            .HasColumnName("fnc_final")
+            .IsRequired()
+            .HasMaxLength(8);
+    }
+}
+
+```
+
+E para encerrarmos, a tabela de Países:
+
+### Países
+Arquivo: LOG_PAIS.TXT  
+Relação dos Nomes dos Países, suas siglas e grafias em inglês e francês(*). 
+
+| Campo      | Tipo        | Descrição                   |
+| :--------- | :---------- | :-------------------------- |
+| PAI_SG     | CHAR(2)     | Sigla do País               |
+| PAI_SG_ALT | CHAR(3)     | Sigla alternativa do País   |
+| PAI_NO_PT  | VARCHAR(72) | Nome do País em Português   |
+| PAI_NO_EN  | VARCHAR(72) | Nome do País em Inglês      |
+| PAI_NO_FR  | VARCHAR(72) | Nome do País em Francês     |
+| PAI_ABREV  | VARCHAR(36) | Abreviatura do nome do País |
+
+Chave primária: PAI_SG
+
+Esta tabela não faz relação com nenhuma outra tabela do DNE Básico. Irei adicioná-la ao nosso modelo para fins didáticos. Minha preferência pessoal, quando se trata da lisatgens de países, é utilizar a [API Países do IBGE](https://servicodados.ibge.gov.br/api/docs/paises).
+
+```csharp title="Correios.DNEBasico.Domain/Entities/Pais.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
+/// <summary>
+/// Relação dos Nomes dos Países, suas siglas e grafias em inglês e francês
+/// </summary>
+public class Pais
+{
+    /// <summary>
+    /// Sigla do País
+    /// </summary>
+    public string Sigla { get; set; } = default!;
+
+    /// <summary>
+    /// Sigla Alternativa do País
+    /// </summary>
+    public string SiglaAlternativa { get; set; } = default!;
+
+    /// <summary>
+    /// Nome do País em Português
+    /// </summary>
+    public string NomePortugues { get; set; } = default!;
+
+    /// <summary>
+    /// Nome do País em Inglês
+    /// </summary>
+    public string NomeIngles { get; set; } = default!;
+
+    /// <summary>
+    /// Nome do País em Francês
+    /// </summary>
+    public string NomeFrances { get; set; } = default!;
+
+    /// <summary>
+    /// Abreviatura do País
+    /// </summary>
+    public string Abreviatura { get; set; } = default!;
+}
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/PaisConfiguration.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Correios.DneBasico.Data.Configurations;
+public class PaisConfiguration : 
+                IEntityTypeConfiguration<Pais>
+{
+    public void Configure(EntityTypeBuilder<Pais> builder)
+    {
+        builder.ToTable("paises");
+
+        builder.HasKey(c => c.Sigla);
+
+        builder.Property(c => c.Sigla)
+            .HasColumnName("pai_sg")
+            .ValueGeneratedNever();
+
+        builder.Property(c => c.SiglaAlternativa)
+            .HasColumnName("pai_sg_alternativa");
+
+        builder.Property(c => c.NomePortugues)
+            .HasColumnName("pai_no_portugues");
+
+        builder.Property(c => c.NomeIngles)
+            .HasColumnName("pai_no_ingles");
+
+        builder.Property(c => c.NomeFrances)
+            .HasColumnName("pai_no_frances");
+
+        builder.Property(c => c.Abreviatura)
+            .HasColumnName("pai_abreviatura");
+    }
+}
+```
+
+## Modelo de Dados - DNE Básico vs Nosso Modelo
+Os correios, juntamente com a documentação do DNE Básico, fornecem um modelo do diagrama entidade-relacionamento (ER) no arquivo `Leaiutes_delimitador.doc`.
+
+<div class="img-center">![Diagrama Entidade-Relacionamento (ER) do DNE Básico](../../../static/img/blog/estrutura-base-dados-cep/diagrama-er-correios-edne.jpg)</div>
+
+Nosso modelo de dados está bastante alinhado com o modelo fornecido pelos Correios, com algumas diferenças:
+- Nomes das tabelas: Optei por utilizar nomes no plural e em português para as tabelas, enquanto o modelo dos Correios utiliza nomes no singular e em maiúsculas.
+- Nomes dos campos: Adotei a convenção de nomenclatura em camelCase para os campos, enquanto o modelo dos Correios utiliza nomes em maiúsculas com sublinhados.
+- Relacionamentos: Alguns relacionamentos foram ajustados para melhor refletir as relações entre as entidades no contexto do DNE Básico.
+- Incluímos a tabela de UF (estados) e Países, que não estavam detalhadas no modelo dos Correios. 
+
+```mermaid
+erDiagram
+    direction LR
+
+    estados {  }
+    faixas_cep_uf {}
+    localidades {}
+    variacoes_localidade {}
+    faixas_cep_localidade {}
+    bairros {}
+    variacoes_bairro {}
+    faixas_cep_bairro {}
+    caixas_postais_comunitarias {}
+    faixas_caixa_postal_comunitaria {}
+    logradouros {}
+    variacoes_logradouro {}
+    faixas_numericas_seccionamento {}
+    grandes_usuarios {}    
+    unidades_operacionais {}
+    faixas_caixa_postal_uop {}
+    paises {}
+    
+    estados ||--o{ faixas_cep_uf : ""
+    estados ||--o{ localidades : ""
+    %%localidades ||--o{ localidades : ""
+    localidades ||--o{ variacoes_localidade : ""
+    localidades ||--o{ faixas_cep_localidade : ""
+    localidades ||--o{ bairros : ""
+    bairros ||--o{ variacoes_bairro : ""
+    bairros ||--o{ faixas_cep_bairro : ""
+    localidades ||--o{ caixas_postais_comunitarias : ""
+    caixas_postais_comunitarias ||--o{ faixas_caixa_postal_comunitaria : ""
+    localidades ||--o{ logradouros : ""
+    logradouros ||--o{ variacoes_logradouro : ""
+    logradouros ||--o{ faixas_numericas_seccionamento : ""    
+    localidades ||--o{ grandes_usuarios : ""
+    localidades ||--o{ unidades_operacionais : ""
+    unidades_operacionais ||--o{ faixas_caixa_postal_uop : ""
+    unidades_operacionais }o--|| estados : ""
+    unidades_operacionais }o--|| bairros : ""
+    unidades_operacionais }o--o| logradouros : ""
+
+```
+
+## Mas.... e os dados?
+Os arquivos de dados do DNE Básico são atualizados quinzenalmente e devem ser previamente adquiridos mediante a compra do serviço de Marketing Direto dos Correio ou através de contratos com a empresa. Após a compra e/ou contrato, eles estarão disponíveis para download no site dos Correios. Um modelo do arquivo pode ser encontrado na área de [arquivos do Marketing Direto dos Correios](https://www.correios.com.br/enviar/marketing-direto/arquivos).
+
+O arquivo zipado do DNE Básico é composto por dois arquivos zipados menores: um contendo
+os arquivos para uma base de dados completa e outro, conhecido como `DELTA`, contendo apenas as alterações desde a última atualização. Nosso foco será no arquivo completo.
+
+Os arquivos estão disponíveis em dois formatos: delimitados e fixos. Neste exemplo, utilizaremos o formato delimitado por arroba (@). Precisaremos de todos os arquivos `.TXT` que estiverem dentro do diretório `Delimitado`. Utilizando o arquivo `eDNE_Basico_25112.zip` como exemplo, temos 42 arquivos:
+
+![Arquivos do DNE Básico - Formato Delimitado](../../../static/img/blog/estrutura-base-dados-cep/arquivos-do-edne-basico.png)  
+
+
+Nossos próximos passos serão:
+- Criar um DbContext com todas as entidades e suas configurações.
+- Criar um projeto de console para importar os dados do DNE Básico para o banco de dados.
+- Criar um banco de dados utilizando o EF Core Migrations.
+- Implementar a lógica de leitura dos arquivos e mapeamento para as entidades.
+  - Para cada arquivo, ler o arquivo com a ajuda do CsvHelper, mapear os dados para as entidades correspondentes e salvar no banco de dados.
+- Executar a importação dos dados.
+
+### Criando o DbContext
+
+No projeto `Correios.DNEBasico.Data`, dentro do diretório `Contexts`, criaremos a classe `DneBasicoDbContext` que herda de `DbContext` e inclui todas as entidades que criamos anteriormente.
+
+```csharp title="Correios.DNEBasico.Data/Contexts/DneBasicoDbContext.cs"
+using Correios.DneBasico.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Correios.DneBasico.Data.Contexts;
+public class DneBasicoDbContext : DbContext
+{
+    public DneBasicoDbContext(DbContextOptions<DneBasicoDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<Bairro> Bairros { get; set; } = default!;
+    public DbSet<CaixaPostalComunitaria> CaixasPostaisComunitarias { get; set; } = default!;
+    public DbSet<Estado> Estados { get; set; } = default!;
+    public DbSet<FaixaCaixaPostalComunitaria> FaixasCaixaPostalComunitaria { get; set; } = default!;
+    public DbSet<FaixaCaixaPostalUop> FaixasCaixaPostalUop { get; set; } = default!;
+    public DbSet<FaixaCepBairro> FaixasCepBairro { get; set; } = default!;
+    public DbSet<FaixaCepEstado> FaixasCepEstado { get; set; } = default!;
+    public DbSet<FaixaCepLocalidade> FaixasCepLocalidade { get; set; } = default!;
+    public DbSet<FaixaNumericaSeccionamento> FaixasNumericasSeccionamento { get; set; } = default!;
+    public DbSet<GrandeUsuario> GrandesUsuarios { get; set; } = default!;
+    public DbSet<Localidade> Localidades { get; set; } = default!;
+    public DbSet<Logradouro> Logradouros { get; set; } = default!;
+    public DbSet<Pais> Paises { get; set; } = default!;
+    public DbSet<UnidadeOperacional> UnidadesOperacionais { get; set; } = default!;
+    public DbSet<VariacaoBairro> VariacoesBairro { get; set; } = default!;
+    public DbSet<VariacaoLocalidade> VariacoesLocalidade { get; set; } = default!;
+    public DbSet<VariacaoLogradouro> VariacoesLogradouro { get; set; } = default!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DneBasicoDbContext).Assembly);
+    }
+}
+```
+
+Repare que estamos utilizando o método `ApplyConfigurationsFromAssembly` para aplicar todas as configurações de entidade definidas no assembly. Isso nos permite incluir novas entidades e suas configurações sem precisar modificar o DbContext diretamente e termos que registrá-las uma a uma manualmente.
+
+### Criando um projeto de console para importação dos dados
+
+
 ## Futuras melhorias
 - Converter os diferentes "tipos de logradouros" para uma enumeração e/ou tabela separada.
-
 
 ## Referências
 - [Correios - Marketing Direto](https://www.correios.com.br/enviar/marketing-direto/marketing) 

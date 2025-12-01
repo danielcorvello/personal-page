@@ -1,14 +1,18 @@
 ---
-slug: estrutura-da-base-de-ceps-dos-correios-edne
-title: "Estrutura da Base de CEPs dos Correios - e-DNE"
+slug: edne-estrutura-da-base-de-ceps-dos-correios-parte-1
+title: "e-DNE - Estrutura da Base de CEPs dos Correios - parte 1 de 3"
 authors: ["corvello"]
-date: 2025-11-17
+date: 2025-12-01
 tags: ["correios", "ceps", "banco-de-dados", "dotnet"]
 draft: false
 toc_max_heading_level: 3
 ---
 
-# Estrutura da Base de CEPs dos Correios - e-DNE
+# e-DNE - Estrutura da Base de CEPs dos Correios - parte 1 de 3
+Nesta série de artigos, exploraremos a estrutura da base de CEPs dos Correios, conhecida como e-DNE (Endereçamento Nacional Eletrônico). Ireremos dividir o conteúdo em três partes para facilitar a compreensão e implementação. Na primeira parte, abordaremos a estrutura dos CEPs e a base de dados e-DNE e criaremos as classes C# representando a estrutura dos dados. Na segunda parte implementaremos a leitura dos arquivos TXT e a persistência dos dados em um banco de dados PostgreSQL. Na terceira e última parte, criaremos uma API utilizando [FastEndpoints](fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet.md) para consultar os dados importados. 
+
+<!-- truncate -->
+## Estrutura dos CEPs
 Segundo os Correios, O CEP (Códigos de Endereçamento Postal) pode ser definido como:
 
 > Um conjunto numérico constituído de oito algarismos, que orienta e acelera o encaminhamento, o tratamento e a distribuição de objetos de correspondência, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios.
@@ -17,7 +21,6 @@ Esse conjunto numérico é estruturado da seguinte forma:
 - **Primeiros cinco dígitos**: Identificam a região, sub-região, setor, sub-setor e a unidade de distribuição.
 - **Últimos três dígitos**: Identificam o ponto de entrega, que pode ser um logradouro, uma empresa ou um órgão público.
 
-<!-- truncate -->
 
 Exemplificando, no CEP `12345-678`:
 - `1`: Região
@@ -55,7 +58,7 @@ O e-DNE é oferecido em duas modalidades, ambas contendo todas as informações 
 | Renovação Trimestral       | 8569-3 | R$ 769,14   |
 | Renovação Anual            | 8573-1 | R$ 2.936,71 |
 
-<small>Fonte: https://www.correios.com.br/enviar/marketing-direto/marketing (visualizado em 17/11/2025)</small>
+<small>Fonte: https://www.correios.com.br/enviar/marketing-direto/marketing (visualizado em 01/12/2025)</small>
 
 ## DNE Básico - Estrutura dos Arquivos TXT
 Vamos entender a estrutura dos arquivos TXT da base DNE Básico. Iremos utilizar a versão dos arquivos que estão delimitados¹, onde cada arquivo contém registros com campos separados por arroba (@). 
@@ -2213,11 +2216,10 @@ public class DneBasicoDbContext : DbContext
 
 Repare que estamos utilizando o método `ApplyConfigurationsFromAssembly` para aplicar todas as configurações de entidade definidas no assembly. Isso nos permite incluir novas entidades e suas configurações sem precisar modificar o DbContext diretamente e termos que registrá-las uma a uma manualmente.
 
-### Criando um projeto de console para importação dos dados
+## Conclusão
+Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correios, detalhando as principais tabelas e suas relações. Criamos entidades C# para representar essas tabelas e configuramos o EF Core para mapear essas entidades para o banco de dados. No próximo artigo, abordaremos a criação de um projeto para importar os dados do DNE Básico para o banco de dados utilizando o DbContext que criamos.
 
 
-## Futuras melhorias
-- Converter os diferentes "tipos de logradouros" para uma enumeração e/ou tabela separada.
 
 ## Referências
 - [Correios - Marketing Direto](https://www.correios.com.br/enviar/marketing-direto/marketing) 

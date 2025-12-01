@@ -9,7 +9,7 @@ toc_max_heading_level: 3
 ---
 
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 1 de 3
-Nesta série de artigos, exploraremos a estrutura da base de CEPs dos Correios, conhecida como e-DNE (Endereçamento Nacional Eletrônico). Ireremos dividir o conteúdo em três partes para facilitar a compreensão e implementação. Na primeira parte, abordaremos a estrutura dos CEPs e a base de dados e-DNE e criaremos as classes C# representando a estrutura dos dados. Na segunda parte implementaremos a leitura dos arquivos TXT e a persistência dos dados em um banco de dados PostgreSQL. Na terceira e última parte, criaremos uma API utilizando [FastEndpoints](fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet.md) para consultar os dados importados. 
+Nesta série de artigos, exploraremos a estrutura da base de CEPs dos Correios, conhecida como e-DNE (Endereçamento Nacional Eletrônico). Ireremos dividir o conteúdo em três partes para facilitar a compreensão e implementação. Na primeira parte, abordaremos a estrutura dos CEPs e a base de dados e-DNE e criaremos as classes C# representando a estrutura dos dados. Na segunda parte implementaremos a leitura dos arquivos TXT e a persistência dos dados em um banco de dados PostgreSQL. Na terceira e última parte, criaremos uma API utilizando [FastEndpoints](../11/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet.md) para consultar os dados importados. 
 
 <!-- truncate -->
 ## Estrutura dos CEPs

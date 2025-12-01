@@ -22,7 +22,7 @@ efcore:
   label: EF Core
   permalink: /efcore
   description: Entity Framework Core
- 
+
 aspire:
   label: Aspire
   permalink: /aspire
@@ -31,9 +31,24 @@ aspire:
 sqlserver:
   label: SQL Server
   permalink: /sqlserver
-  description: SQL Server    
+  description: SQL Server
 
 api:
   label: API
   permalink: /api
   description: API Development
+
+correios:
+  label: Correios
+  permalink: /correios
+  description: Correios do Brasil
+
+ceps:
+  label: CEPs
+  permalink: /ceps
+  description: Código de Endereçamento Postal
+
+banco-de-dados:
+  label: Banco de Dados
+  permalink: /banco-de-dados
+  description: Banco de Dados

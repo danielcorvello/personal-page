@@ -66,12 +66,9 @@ Vamos entender a estrutura dos arquivos TXT da base DNE Básico. Iremos utilizar
 Temos 16 arquivos principais na base DNE Básico. Para cada arquivo, iremos entender seus dados e criar uma classe C# representando a estrutura dos dados. Após a criação das classes, criaremos um método para ler os arquivos TXT e mapear os dados para as classes correspondentes e salvar os dados de forma estruturada em um banco de dados `PostgreSQL`. No final, criaremos uma API para consultar os dados importados.
 
 ## Criação do Projeto
-Iremos utilizar o Visual Studio 2022 para criar uma solution para o nosso projeto. A solution será composta por 5 projetos:
+Iremos utilizar o Visual Studio 2022 para criar uma solution para o nosso projeto. A solution será composta por alguns projetos:
 1. **Correios.DNEBasico.Domain**: Projeto do tipo Class Library que conterá as classes representando a estrutura dos dados.
 2. **Correios.DNEBasico.Data**: Projeto do tipo Class Library que conterá a lógica para ler os arquivos TXT e mapear os dados para as classes do projeto Domain.
-3. **Correios.DNEBasico.App**: Projeto do tipo Console Application que será o ponto de entrada da aplicação e onde iremos chamar os métodos para ler os arquivos e salvar os dados no banco de dados.
-4. **Correios.DNEBasico.Api**: Projeto do tipo ASP.NET Core Web API que fornecerá endpoints para consultar os dados importados.
-5. **Correios.DNEBasico.Api.Tests**: Projeto do tipo xUnit Test Project que conterá os testes automatizados para a API.
 
 Utilizaremos o Entity Framework Core como ORM para facilitar a manipulação dos dados no banco de dados PostgreSQL.
 
@@ -81,7 +78,9 @@ Para criar a solution e os projetos, siga os passos abaixo:
 3. Selecione "Blank Solution" e clique em "Next".
 4. Dê um nome para a solution, por exemplo, `Correios.DNEBasico` e clique em "Create".
 5. Clique com o botão direito na solution no Solution Explorer e selecione "Add" > "New Project".
-6. Selecione "Class Library" e dê o nome `Correios.DNEBasico.Domain`. Repita o processo para criar os projetos `Correios.DNEBasico.Data`, `Correios.DNEBasico.App`, `Correios.DNEBasico.Api` e `Correios.DNEBasico.Api.Tests` selecionando o tipo apropriado para cada um.
+6. Selecione "Class Library" e dê o nome `Correios.DNEBasico.Domain`. Repita o processo para criar o projeto `Correios.DNEBasico.Data`.
+
+Nas próximas partes, iremos adicionar mais projetos para o importador e para a API, mas por enquanto, vamos focar nesses dois primeiros projetos.
 
 ## Estrutura dos Arquivos TXT
 A seguir, apresento a estrutura dos arquivos TXT da base DNE Básico, juntamente com a descrição dos campos e as nossas classes C# correspondentes.
@@ -123,7 +122,6 @@ public class Estado
     /// </summary>    
     public string Ibge { get; set; } = default!;
 }
-
 ```
 
 Para mapear essa entidade no banco de dados utilizando o Entity Framework Core, crie um diretório chamado `Configurations` dentro do projeto `Correios.DNEBasico.Data`.
@@ -162,6 +160,14 @@ public class EstadoConfiguration : IEntityTypeConfiguration<Estado>
 }
 ```
 
+Para evitarmos repetir os `using` em todas as classes de configuração, podemos criar um arquivo `Global.Usings.cs` no projeto `Correios.DNEBasico.Data` com os seguintes conteúdos:
+
+```csharp title="Correios.DNEBasico.Data/Global.Usings.cs"
+global using Correios.DneBasico.Domain.Entities;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+```
+
 Seguindo esse padrão, iremos criar as outras tabelas e classes correspondentes para os demais arquivos do DNE Básico.
 
 ### Faixa de CEP de UF
@@ -176,7 +182,7 @@ Arquivo: LOG_FAIXA_UF.TXT
 Tem como chave primária os campos `UFE_SG` e `UFE_CEP_INI`.
 Iremos relacionar essa tabela com a tabela de UFs através do campo `UFE_SG`.
 
-```csharp title="Correios.DNEBasico.Domain/Entities/FaixaCepUf.cs"
+```csharp title="Correios.DNEBasico.Domain/Entities/FaixaCepEstado.cs"
 namespace Correios.DneBasico.Domain.Entities;
 
 /// <summary>
@@ -209,11 +215,8 @@ public class FaixaCepEstado
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCepEstadoConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class FaixaCepEstadoConfiguration : IEntityTypeConfiguration<FaixaCepEstado>
 {
     public void Configure(EntityTypeBuilder<FaixaCepEstado> builder)
@@ -243,6 +246,7 @@ public class FaixaCepEstadoConfiguration : IEntityTypeConfiguration<FaixaCepEsta
             .HasMaxLength(8);
     }
 }
+
 ```
 
 ### Localidades
@@ -303,8 +307,7 @@ public enum SituacaoLocalidade
     CODIFICADA = 1,
 
     /// <summary>
-    /// Distrito ou Povoado inserido na codificação em 
-    /// nível de Logradouro
+    /// Distrito ou Povoado inserido na codificação em nível de Logradouro
     /// </summary>
     [Description("Distrito ou Povoado")]
     DISTRITO_OU_POVOADO = 2,
@@ -314,12 +317,14 @@ public enum SituacaoLocalidade
     /// </summary>
     [Description("Fase de Codificação")]
     FASE_DE_CODIFICACAO = 3,
-}    
+}
 ```
 
 ```csharp title="Correios.DNEBasico.Domain/Enums/TipoLocalidade.cs"
 using System.ComponentModel;
+
 namespace Correios.DneBasico.Domain.Enums;
+
 /// <summary>
 /// Tipo da Localidade
 /// </summary>
@@ -331,22 +336,22 @@ namespace Correios.DneBasico.Domain.Enums;
 public enum TipoLocalidade
 {
     /// <summary>
-    /// Distrito (D)
+    /// Distrito
     /// </summary>
     [Description("Distrito")]
-    DISTRITO = 'D',
+    DISTRITO = 1,
 
     /// <summary>
-    /// Município (M)
+    /// Município
     /// </summary>
     [Description("Município")]
-    MUNICIPIO = 'M',
+    MUNICIPIO = 2,
 
     /// <summary>
-    /// Povoado 
+    /// Povoado
     /// </summary>
     [Description("Povoado")]
-    POVOADO = 'P',
+    POVOADO = 3,
 }
 ```
 
@@ -432,21 +437,13 @@ public class Localidade
     /// Localidade de subordinação
     /// </summary>
     public Localidade? Subordinada { get; set; } = default!;
-
-    /// <summary>
-    /// Variações da Localidade
-    /// </summary>
-    public ICollection<VariacaoLocalidade> Variacoes { get; set; } = [];
     #endregion
 }
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/LocalidadeConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class LocalidadeConfiguration : IEntityTypeConfiguration<Localidade>
 {
     public void Configure(EntityTypeBuilder<Localidade> builder)
@@ -595,11 +592,8 @@ Quando serializamos a entidade `Localidade` para JSON, a propriedade `Variacoes`
 
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/VariacaoLocalidadeConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class VariacaoLocalidadeConfiguration : IEntityTypeConfiguration<VariacaoLocalidade>
 {
     public void Configure(EntityTypeBuilder<VariacaoLocalidade> builder)
@@ -671,9 +665,7 @@ namespace Correios.DneBasico.Domain.Entities;
 /// Faixa de CEP das Localidades codificadas
 /// </summary>
 /// <remarks>
-/// Este arquivo contém dados relativos às faixas de CEP das localidades
-/// classificadas na categoria político-administrativa de município 
-/// codificadas com CEP único ou codificadas por logradouros.
+/// Este arquivo contém dados relativos às faixas de CEP das localidades classificadas na categoria político-administrativa de município codificadas com CEP único ou codificadas por logradouros.
 /// </remarks>
 public class FaixaCepLocalidade
 {
@@ -698,17 +690,13 @@ public class FaixaCepLocalidade
     public string CepFinal { get; set; } = default!;
 
     /// <summary>
-    /// tipo de Faixa de CEP: T – Total do Município, C – Exclusiva da  Sede Urbana
+    /// tipo de Faixa de CEP: T –Total do Município, C – Exclusiva da  Sede Urbana
     /// </summary>
     public TipoFaixaCep TipoFaixa { get; set; } = default!;
 }
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCepLocalidadeConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 public class FaixaCepLocalidadeConfiguration : IEntityTypeConfiguration<FaixaCepLocalidade>
 {
     public void Configure(EntityTypeBuilder<FaixaCepLocalidade> builder)
@@ -769,13 +757,13 @@ public class Bairro
     /// <summary>
     /// Sigla da UF
     /// </summary>
-    public string UF { get; set; } = default!;
+    public string Uf { get; set; } = default!;
 
     /// <summary>
     /// Chave da localidade
     /// </summary>
     public int LocalidadeId { get; set; }
-    
+
     /// <summary>
     /// Nome do bairro
     /// </summary>
@@ -790,17 +778,14 @@ public class Bairro
     /// <summary>
     /// Localidade
     /// </summary>
-    public Localidade Localidade { get; set; } = default!;    
+    public Localidade Localidade { get; set; } = default!;
     #endregion
 }
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/BairroConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class BairroConfiguration : IEntityTypeConfiguration<Bairro>
 {
     public void Configure(EntityTypeBuilder<Bairro> builder)
@@ -813,7 +798,7 @@ public class BairroConfiguration : IEntityTypeConfiguration<Bairro>
             .HasColumnName("bai_nu")
             .ValueGeneratedNever();
 
-        builder.Property(b => b.UF)
+        builder.Property(b => b.Uf)
             .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
@@ -846,11 +831,12 @@ Outras denominações do Bairro Localidade (denominação popular, denominação
 Chave primária: BAI_NU, VDB_NU
 
 ```csharp title="Correios.DNEBasico.Domain/Entities/VariacaoBairro.cs"
+using System.Text.Json.Serialization;
+
 namespace Correios.DneBasico.Domain.Entities;
 
 /// <summary>
-/// Outras denominações do Bairro Localidade
-/// (denominação popular, denominação anterior)
+/// Outras denominações do Bairro Localidade (denominação popular, denominação anterior)
 /// </summary>
 public class VariacaoBairro
 {
@@ -889,11 +875,8 @@ Igualmente à entidade `Localidade`, precisamos adicionar uma coleção de varia
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/VariacaoBairroConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class VariacaoBairroConfiguration : IEntityTypeConfiguration<VariacaoBairro>
 {
     public void Configure(EntityTypeBuilder<VariacaoBairro> builder)
@@ -962,15 +945,11 @@ public class FaixaCepBairro
     public Bairro Bairro { get; set; } = default!;
     #endregion
 }
-
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCepBairroConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class FaixaCepBairroConfiguration : IEntityTypeConfiguration<FaixaCepBairro>
 {
     public void Configure(EntityTypeBuilder<FaixaCepBairro> builder)
@@ -1012,6 +991,8 @@ Caixa Postal Comunitária(CPC) - são áreas rurais e/ou urbanas periféricas n�
 Chave primária: CPC_NU
 
 ```csharp title="Correios.DNEBasico.Domain/Entities/CaixaPostalComunitaria.cs"
+namespace Correios.DneBasico.Domain.Entities;
+
 /// <summary>
 /// Caixa Postal Comunitária(CPC) - são áreas rurais e/ou urbanas periféricas não atendidas pela distribuição domiciliária.
 /// </summary>
@@ -1025,7 +1006,7 @@ public class CaixaPostalComunitaria
     /// <summary>
     /// sigla da UF
     /// </summary>
-    public string UF { get; set; } = default!;
+    public string Uf { get; set; } = default!;
 
     /// <summary>
     /// chave da localidade
@@ -1057,10 +1038,6 @@ public class CaixaPostalComunitaria
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/CaixaPostalComunitariaConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
 
 public class CaixaPostalComunitariaConfiguration : IEntityTypeConfiguration<CaixaPostalComunitaria>
@@ -1075,7 +1052,7 @@ public class CaixaPostalComunitariaConfiguration : IEntityTypeConfiguration<Caix
             .HasColumnName("cpc_nu")
             .ValueGeneratedNever();
 
-        builder.Property(c => c.UF)
+        builder.Property(c => c.Uf)
             .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
@@ -1147,10 +1124,6 @@ public class FaixaCaixaPostalComunitaria
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCaixaPostalComunitariaConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
 
 public class FaixaCaixaPostalComunitariaConfiguration : IEntityTypeConfiguration<FaixaCaixaPostalComunitaria>
@@ -1176,7 +1149,6 @@ public class FaixaCaixaPostalComunitariaConfiguration : IEntityTypeConfiguration
             .HasMaxLength(6);
     }
 }
-
 ```
 
 Nossa próxima parada: a tabela de logradouros! Mas antes vamos dar uma olhada em como está o nosso diagrama entidade-relacionamento (ER) até agora:
@@ -1240,10 +1212,7 @@ namespace Correios.DneBasico.Domain.Entities;
 /// Logradouro
 /// </summary>
 /// <remarks>
-/// Este arquivo contém os registros das localidades codificadas 
-/// por logradouro(LOC_IN_SIT=1) e de localidades em fase de 
-/// codificação(LOC_IN_SIT=3). Para encontrar o bairro do logradouro, 
-/// utilize o campo BAI_NU_INI (relacionamento com LOG_BAIRRO, campo BAI_NU).
+/// Este arquivo contém os registros das localidades codificadas por  logradouro(LOC_IN_SIT=1) e de localidades em fase de codificação(LOC_IN_SIT=3). Para encontrar o bairro do logradouro, utilize o campo BAI_NU_INI(relacionamento com LOG_BAIRRO, campo BAI_NU)..
 /// </remarks>
 public class Logradouro
 {
@@ -1255,7 +1224,7 @@ public class Logradouro
     /// <summary>
     /// Sigla da UF
     /// </summary>
-    public string UF { get; set; } = default!;
+    public string Uf { get; set; } = default!;
 
     /// <summary>
     /// Chave da localidade
@@ -1288,8 +1257,7 @@ public class Logradouro
     public string Tipo { get; set; } = default!;
 
     /// <summary>
-    /// Indicador de utilização do tipo de logradouro
-    /// (S ou N) (opcional)
+    /// Indicador de utilização do tipo de logradouro (S ou N) (opcional)
     /// </summary>
     public string? StatusTipo { get; set; }
 
@@ -1310,7 +1278,6 @@ public class Logradouro
     public Bairro Bairro { get; set; } = default!;
     #endregion
 }
-
 ```
 
 Algumas considerações sobre o arquivo de logradouros:  
@@ -1319,11 +1286,8 @@ Algumas considerações sobre o arquivo de logradouros:
 - StatusTipo (LOG_STA_TLO): Este campo indica se o tipo de logradouro está em uso ou não, com valores possíveis "S" (Sim) ou "N" (Não). Ele é opcional e pode ser nulo. Decidi mantê-lo como uma string nullable com um caractere, para refletir exatamente o que está nos arquivos.
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/LogradouroConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class LogradouroConfiguration : IEntityTypeConfiguration<Logradouro>
 {
     public void Configure(EntityTypeBuilder<Logradouro> builder)
@@ -1336,7 +1300,7 @@ public class LogradouroConfiguration : IEntityTypeConfiguration<Logradouro>
             .HasColumnName("log_nu")
             .ValueGeneratedNever();
 
-        builder.Property(l => l.UF)
+        builder.Property(l => l.Uf)
             .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
@@ -1393,6 +1357,8 @@ Outras denominações do logradouro (denominação popular, denominação anteri
 Chave primária: LOG_NU, VLO_NU
 
 ```csharp title="Correios.DNEBasico.Domain/Entities/VariacaoLogradouro.cs"
+using System.Text.Json.Serialization;
+
 namespace Correios.DneBasico.Domain.Entities;
 
 /// <summary>
@@ -1402,22 +1368,22 @@ namespace Correios.DneBasico.Domain.Entities;
 public class VariacaoLogradouro
 {
     /// <summary>
-    /// chave do logradouro
+    /// Chave do logradouro
     /// </summary>
     public int LogradouroId { get; set; }
 
     /// <summary>
-    /// ordem da denominação
+    /// Ordem da denominação
     /// </summary>
     public int Ordem { get; set; }
 
     /// <summary>
-    /// tipo de logradouro da variação
+    /// Tipo de logradouro da variação
     /// </summary>
     public string Tipo { get; set; } = default!;
 
     /// <summary>
-    /// nome da variação do logradouro
+    /// Nome da variação do logradouro
     /// </summary>
     public string Denominacao { get; set; } = default!;
 
@@ -1425,17 +1391,24 @@ public class VariacaoLogradouro
     /// <summary>
     /// Logradouro 
     /// </summary>
+    [JsonIgnore]
     public Logradouro Logradouro { get; set; } = default!;
     #endregion
 }
 ```
 
-```csharp title="Correios.DNEBasico.Data/Configurations/VariacaoLogradouroConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+Assim como fizemos com as variações de localidade e bairro, precisamos adicionar uma coleção de variações de logradouro para representar o relacionamento um-para-muitos entre `Logradouro` e `VariacaoLogradouro`. Adicione a seguinte propriedade na classe `Logradouro`:
 
+```csharp title="Correios.DNEBasico.Domain/Entities/Logradouro.cs"
+    /// <summary>
+    /// Variações do Logradouro
+    /// </summary>
+    public ICollection<VariacaoLogradouro> Variacoes { get; set; } = [];
+```
+
+```csharp title="Correios.DNEBasico.Data/Configurations/VariacaoLogradouroConfiguration.cs"
 namespace Correios.DneBasico.Data.Configurations;
+
 public class VariacaoLogradouroConfiguration : IEntityTypeConfiguration<VariacaoLogradouro>
 {
     public void Configure(EntityTypeBuilder<VariacaoLogradouro> builder)
@@ -1569,11 +1542,8 @@ public class FaixaNumericaSeccionamento
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/FaixaNumericaSeccionamentoConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class FaixaNumericaSeccionamentoConfiguration : IEntityTypeConfiguration<FaixaNumericaSeccionamento>
 {
     public void Configure(EntityTypeBuilder<FaixaNumericaSeccionamento> builder)
@@ -1635,10 +1605,7 @@ namespace Correios.DneBasico.Domain.Entities;
 /// Grande Usuário
 /// </summary>
 /// <remarks>
-/// São clientes com grande volume postal (empresas, universidades, 
-/// bancos, órgãos públicos, etc), O campo LOG_NU está sem conteúdo 
-/// para as localidades não codificadas(LOC_IN_SIT=0), devendo ser 
-/// utilizado o campo GRU_ENDERECO para  endereçamento.
+/// São clientes com grande volume postal (empresas, universidades, bancos,  órgãos públicos, etc), O campo LOG_NU está sem conteúdo para as localidades não codificadas(LOC_IN_SIT=0), devendo ser utilizado o campo GRU_ENDEREÇO para  endereçamento.
 /// </remarks>
 public class GrandeUsuario
 {
@@ -1650,7 +1617,7 @@ public class GrandeUsuario
     /// <summary>
     /// sigla da UF
     /// </summary>
-    public string UF { get; set; } = default!;
+    public string Uf { get; set; } = default!;
 
     /// <summary>
     /// chave da localidade
@@ -1707,11 +1674,8 @@ public class GrandeUsuario
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/GrandeUsuarioConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class GrandeUsuarioConfiguration : IEntityTypeConfiguration<GrandeUsuario>
 {
     public void Configure(EntityTypeBuilder<GrandeUsuario> builder)
@@ -1724,7 +1688,7 @@ public class GrandeUsuarioConfiguration : IEntityTypeConfiguration<GrandeUsuario
             .HasColumnName("gru_nu")
             .ValueGeneratedNever();
 
-        builder.Property(g => g.UF)
+        builder.Property(g => g.Uf)
             .HasColumnName("ufe_sg")
             .IsRequired()
             .HasMaxLength(2);
@@ -1800,7 +1764,7 @@ public class UnidadeOperacional
     /// <summary>
     /// sigla da UF
     /// </summary>
-    public string UF { get; set; } = default!;
+    public string Uf { get; set; } = default!;
 
     /// <summary>
     /// chave da localidade
@@ -1816,7 +1780,6 @@ public class UnidadeOperacional
     /// chave do logradouro (opcional)
     /// </summary>
     public int? LogradouroId { get; set; }
-
 
     /// <summary>
     /// nome da UOP
@@ -1867,11 +1830,8 @@ public class UnidadeOperacional
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/UnidadeOperacionalConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class UnidadeOperacionalConfiguration : IEntityTypeConfiguration<UnidadeOperacional>
 {
     public void Configure(EntityTypeBuilder<UnidadeOperacional> builder)
@@ -1968,16 +1928,12 @@ public class FaixaCaixaPostalUop
     #region Navigation Properties
     public UnidadeOperacional UnidadeOperacional { get; set; } = default!;
     #endregion
-
 }
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/FaixaCaixaPostalUopConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
+
 public class FaixaCaixaPostalUopConfiguration : IEntityTypeConfiguration<FaixaCaixaPostalUop>
 {
     public void Configure(EntityTypeBuilder<FaixaCaixaPostalUop> builder)
@@ -2001,7 +1957,6 @@ public class FaixaCaixaPostalUopConfiguration : IEntityTypeConfiguration<FaixaCa
             .HasMaxLength(8);
     }
 }
-
 ```
 
 E para encerrarmos, a tabela de Países:
@@ -2059,18 +2014,14 @@ public class Pais
     /// <summary>
     /// Abreviatura do País
     /// </summary>
-    public string Abreviatura { get; set; } = default!;
+    public string? Abreviatura { get; set; }
 }
 ```
 
 ```csharp title="Correios.DNEBasico.Data/Configurations/PaisConfiguration.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Correios.DneBasico.Data.Configurations;
-public class PaisConfiguration : 
-                IEntityTypeConfiguration<Pais>
+
+public class PaisConfiguration : IEntityTypeConfiguration<Pais>
 {
     public void Configure(EntityTypeBuilder<Pais> builder)
     {
@@ -2179,10 +2130,8 @@ Nossos próximos passos serão:
 No projeto `Correios.DNEBasico.Data`, dentro do diretório `Contexts`, criaremos a classe `DneBasicoDbContext` que herda de `DbContext` e inclui todas as entidades que criamos anteriormente.
 
 ```csharp title="Correios.DNEBasico.Data/Contexts/DneBasicoDbContext.cs"
-using Correios.DneBasico.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-
 namespace Correios.DneBasico.Data.Contexts;
+
 public class DneBasicoDbContext : DbContext
 {
     public DneBasicoDbContext(DbContextOptions<DneBasicoDbContext> options) : base(options)
@@ -2220,6 +2169,9 @@ Repare que estamos utilizando o método `ApplyConfigurationsFromAssembly` para a
 Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correios, detalhando as principais tabelas e suas relações. Criamos entidades C# para representar essas tabelas e configuramos o EF Core para mapear essas entidades para o banco de dados. No próximo artigo, abordaremos a criação de um projeto para importar os dados do DNE Básico para o banco de dados utilizando o DbContext que criamos.
 
 
+## Outras partes desta série
+- [Estrutura da Base de CEPs dos Correios - parte 2 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2)
+
 
 ## Referências
 - [Correios - Marketing Direto](https://www.correios.com.br/enviar/marketing-direto/marketing) 
@@ -2230,3 +2182,9 @@ Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correi
 <small>
 ¹ No DNE Básico, os arquivos podem ser encontrados em dois formatos: delimitados e fixos. No formato delimitado, os campos são separados por um caractere específico (neste caso, o arroba @), enquanto no formato fixo, cada campo possui um tamanho pré-definido. 
 </small>
+
+## Changelog
+
+| Data         |                    Atualização                    |
+| :----------- | :---------------------------------------------- | 
+| 15/12/2025 | Alteração das classes dos modelos para refletir as mudanças criadas após revisão durante a criação da parte 2 do artigo e inclusão do Arquivo Global. |

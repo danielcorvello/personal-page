@@ -4,7 +4,7 @@ title: "e-DNE - Estrutura da Base de CEPs dos Correios - parte 2 de 3"
 authors: ["corvello"]
 date: 2025-12-17
 tags: ["correios", "ceps", "banco-de-dados", "dotnet"]
-draft: true
+draft: false
 toc_max_heading_level: 3
 ---
 
@@ -13,26 +13,29 @@ Nesta segunda parte iremos continuar a explorar a estrutura da base de dados e-D
 
 <!-- truncate -->
 ## Criação do Projeto de Importação
-Iniciaremos criando o projeto `Correios.DNEBasico.Importer`, que será do tipo Console Application. Esse projeto será responsável por ler os arquivos TXT da base DNE Básico, mapear os dados para as classes do projeto Domain e salvar os dados no banco de dados PostgreSQL utilizando o DbContext que criamos na parte 1.
+Iniciaremos criando o projeto `Correios.DneBasico.Importer`, que será do tipo Console Application. Esse projeto será responsável por ler os arquivos TXT da base DNE Básico, mapear os dados para as classes do projeto Domain e salvar os dados no banco de dados PostgreSQL utilizando o DbContext que criamos na parte 1.
 
 Iremos iniciar pela configuração dos Mappers do CSVHelper para cada uma das classes que criamos na parte 1. Esses mappers serão responsáveis por mapear os campos dos arquivos TXT para as propriedades das classes.
 
-Adicione uma referência ao projeto `Correios.DNEBasico.Domain` no projeto `Correios.DNEBasico.Importer`, e instale o pacote NuGet `CsvHelper` no projeto `Correios.DNEBasico.Importer`.
+Adicione uma referência ao projeto `Correios.DneBasico.Domain` no projeto `Correios.DneBasico.Importer`, e instale o pacote NuGet `CsvHelper 33.1.0` no projeto `Correios.DneBasico.Importer`.
 
-Adicione um arquivo `Global.Usings.cs` no projeto `Correios.DNEBasico.Importer` com o seguinte conteúdo para facilitar o uso dos namespaces comuns:
+Adicione um arquivo `Global.Usings.cs` no projeto `Correios.DneBasico.Importer` com o seguinte conteúdo para facilitar o uso dos namespaces comuns:
 
-```csharp title="Correios.DNEBasico.Importer/Global.Usings.cs"
+```csharp title="Correios.DneBasico.Importer/Global.Usings.cs"
 global using Correios.DneBasico.Domain.Entities;
+global using Correios.DneBasico.Domain.Enums;
+global using CsvHelper;
 global using CsvHelper.Configuration;
+global using CsvHelper.TypeConversion;
 ```
 
 ## Mapeadores do CSVHelper
 Os mapeadores irão herdar da classe `ClassMap<T>` do CSVHelper, onde `T` é a classe que estamos mapeando. Cada mapeador irá mapear os campos do arquivo TXT para as propriedades da classe correspondente. O mapeador serve, em resumo, para indicarmos quais colunas do arquivo TXT correspondem a quais propriedades da classe. Esse passo é importante pois nos arquivos TXT os campos estão separados por arroba (@) e , principalmente, por não possuírem cabeçalho, ou seja, não possuem o nome das colunas. Caso queira entender melhor o funcionamento do CSVHelper e dos mapeadores, recomendo a leitura da documentação oficial do [CSVHelper - Reading a csv](https://joshclose.github.io/CsvHelper/getting-started/#reading-a-csv-file).
 
-Vamos criar um diretório chamado `Mappings` dentro do projeto `Correios.DNEBasico.Importer` e adicionar os mapeadores para cada uma das classes que criamos na parte 1.
+Vamos criar um diretório chamado `Mappings` dentro do projeto `Correios.DneBasico.Importer` e adicionar os mapeadores para cada uma das classes que criamos na parte 1.
 
 ### Bairros
-```csharp title="Correios.DNEBasico.Importer/Mappings/BairroMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/BairroMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class BairroMap : ClassMap<Bairro>
@@ -59,7 +62,7 @@ Na `NomeAbreviado`, utilizamos o método `TypeConverterOption.NullValues(string.
 Os próximos mapeadores seguem o mesmo padrão, mapeando cada propriedade para o índice correspondente no arquivo TXT, com algumas exceções. Quando houver uma exceção, irei explicar o motivo.
 
 ### Caixas Postais Comunitárias
-```csharp title="Correios.DNEBasico.Importer/Mappings/CaixaPostalComunitariaMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/CaixaPostalComunitariaMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class CaixaPostalComunitariaMap : ClassMap<CaixaPostalComunitaria>
@@ -77,7 +80,7 @@ public class CaixaPostalComunitariaMap : ClassMap<CaixaPostalComunitaria>
 ```
 
 ### Faixa de Caixas Postais Comunitárias
-```csharp title="Correios.DNEBasico.Importer/Mappings/FaixaCaixaPostalComunitariaMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/FaixaCaixaPostalComunitariaMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class FaixaCaixaPostalComunitariaMap : ClassMap<FaixaCaixaPostalComunitaria>
@@ -92,7 +95,7 @@ public class FaixaCaixaPostalComunitariaMap : ClassMap<FaixaCaixaPostalComunitar
 ```
 
 ### Faixa de Caixas Postais de Unidade Operacional
-```csharp title="Correios.DNEBasico.Importer/Mappings/FaixaCaixaPostalUopMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/FaixaCaixaPostalUopMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class FaixaCaixaPostalUopMap : ClassMap<FaixaCaixaPostalUop>
@@ -107,7 +110,7 @@ public class FaixaCaixaPostalUopMap : ClassMap<FaixaCaixaPostalUop>
 ```
 
 ### Faixa de CEP de Bairro
-```csharp title="Correios.DNEBasico.Importer/Mappings/FaixaCepBairroMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/FaixaCepBairroMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class FaixaCepBairroMap : ClassMap<FaixaCepBairro>
@@ -122,7 +125,7 @@ public class FaixaCepBairroMap : ClassMap<FaixaCepBairro>
 ```
 
 ### Faixa de CEP de Estado
-```csharp title="Correios.DNEBasico.Importer/Mappings/FaixaCepEstadoMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/FaixaCepEstadoMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class FaixaCepEstadoMap : ClassMap<FaixaCepEstado>
@@ -137,11 +140,7 @@ public class FaixaCepEstadoMap : ClassMap<FaixaCepEstado>
 ```
 
 ### Faixa de CEP de Localidade
-```csharp title="Correios.DNEBasico.Importer/Mappings/FaixaCepLocalidadeMap.cs"
-using Correios.DneBasico.Domain.Enums;
-using CsvHelper;
-using CsvHelper.TypeConversion;
-
+```csharp title="Correios.DneBasico.Importer/Mappings/FaixaCepLocalidadeMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class FaixaCepLocalidadeMap : ClassMap<FaixaCepLocalidade>
@@ -185,11 +184,7 @@ public class TipoFaixaConverter : ITypeConverter
 No mapeador `FaixaCepLocalidadeMap`, temos uma propriedade `TipoFaixa` que é do tipo enum `TipoFaixaCep`. Para mapear esse campo corretamente, criamos um conversor personalizado `TipoFaixaConverter` que implementa a interface `ITypeConverter` do CSVHelper. Esse conversor mapeia os valores "T" e "C" para os valores correspondentes do enum.
 
 ### Faixa Numérica de Seccionamento
-```csharp title="Correios.DNEBasico.Importer/Mappings/FaixaNumericaSeccionamentoMap.cs"
-using Correios.DneBasico.Domain.Enums;
-using CsvHelper;
-using CsvHelper.TypeConversion;
-
+```csharp title="Correios.DneBasico.Importer/Mappings/FaixaNumericaSeccionamentoMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class FaixaNumericaSeccionamentoMap : ClassMap<FaixaNumericaSeccionamento>
@@ -236,7 +231,7 @@ public class ParidadeLadoSeccionamentoConverter : ITypeConverter
 Aqui, no mapeador `FaixaNumericaSeccionamentoMap`, temos uma propriedade `ParidadeLado` que também é do tipo enum `ParidadeLadoSeccionamento`. Criamos o conversor personalizado `ParidadeLadoSeccionamentoConverter` para mapear os valores "A", "P", "I", "D" e "E" para os valores correspondentes do enum.
 
 ### Grandes Usuários
-```csharp title="Correios.DNEBasico.Importer/Mappings/GrandeUsuarioMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/GrandeUsuarioMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class GrandeUsuarioMap : ClassMap<GrandeUsuario>
@@ -251,17 +246,16 @@ public class GrandeUsuarioMap : ClassMap<GrandeUsuario>
         Map(m => m.Nome).Index(5);
         Map(m => m.Endereco).Index(6);
         Map(m => m.Cep).Index(7);
-        Map(m => m.NomeAbreviado).TypeConverterOption.NullValues(string.Empty).Index(8);
+        Map(m => m.NomeAbreviado)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(8);
     }
 }
 ```
 
 ### Localidades
-```csharp title="Correios.DNEBasico.Importer/Mappings/LocalidadeMap.cs"
-using Correios.DneBasico.Domain.Enums;
-using CsvHelper;
-using CsvHelper.TypeConversion;
-
+```csharp title="Correios.DneBasico.Importer/Mappings/LocalidadeMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class LocalidadeMap : ClassMap<Localidade>
@@ -271,18 +265,29 @@ public class LocalidadeMap : ClassMap<Localidade>
         Map(m => m.Id).Index(0);
         Map(m => m.Uf).Index(1);
         Map(m => m.Nome).Index(2);
-        Map(m => m.Cep).TypeConverterOption.NullValues(string.Empty).Index(3);
+        Map(m => m.Cep)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(3);
         Map(m => m.Situacao).Index(4);
-        Map(m => m.Tipo).TypeConverter<TipoLocalidadeConverter>().Index(5);
+        Map(m => m.Tipo)
+            .TypeConverter<TipoLocalidadeConverter>()
+            .Index(5);
         Map(m => m.SubordinadaId).Index(6);
         Map(m => m.NomeAbreviado).Index(7);
-        Map(m => m.Ibge).TypeConverterOption.NullValues(string.Empty).Index(8);
+        Map(m => m.Ibge)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(8);
     }
 }
 
 public class TipoLocalidadeConverter : ITypeConverter
 {
-    public object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+    public object? ConvertFromString(
+        string? text,
+        IReaderRow row,
+        MemberMapData memberMapData)
     {
         return text switch
         {
@@ -292,7 +297,10 @@ public class TipoLocalidadeConverter : ITypeConverter
             _ => throw new InvalidOperationException($"Tipo de localidade desconhecido: {text}")
         };
     }
-    public string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+    public string? ConvertToString(
+        object? value,
+        IWriterRow row,
+        MemberMapData memberMapData)
     {
         throw new NotImplementedException();
     }
@@ -302,7 +310,7 @@ public class TipoLocalidadeConverter : ITypeConverter
 Nesse mapeador `LocalidadeMap`, temos a propriedade `Tipo` que é do tipo enum `TipoLocalidade`.... e acredito que você entendeu o resto :)
 
 ### Logradouros
-```csharp title="Correios.DNEBasico.Importer/Mappings/LogradouroMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/LogradouroMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class LogradouroMap : ClassMap<Logradouro>
@@ -315,11 +323,20 @@ public class LogradouroMap : ClassMap<Logradouro>
         Map(m => m.BairroId).Index(3);
         // Pulamos o BAI_NU_FIM
         Map(m => m.Nome).Index(5);
-        Map(m => m.Complemento).TypeConverterOption.NullValues(string.Empty).Index(6);
+        Map(m => m.Complemento)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(6);
         Map(m => m.Cep).Index(7);
         Map(m => m.Tipo).Index(8);
-        Map(m => m.StatusTipo).TypeConverterOption.NullValues(string.Empty).Index(9);
-        Map(m => m.NomeAbreviado).TypeConverterOption.NullValues(string.Empty).Index(10);
+        Map(m => m.StatusTipo)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(9);
+        Map(m => m.NomeAbreviado)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(10);
     }
 }
 ```
@@ -327,7 +344,7 @@ public class LogradouroMap : ClassMap<Logradouro>
 Na logradouro, pulamos o campo `BAI_NU_FIM` que está no índice 4 do arquivo TXT, pois não temos essa propriedade na nossa classe `Logradouro`.
 
 ### Países
-```csharp title="Correios.DNEBasico.Importer/Mappings/PaisMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/PaisMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class PaisMap : ClassMap<Pais>
@@ -339,13 +356,16 @@ public class PaisMap : ClassMap<Pais>
         Map(m => m.NomePortugues).Index(2);
         Map(m => m.NomeIngles).Index(3);
         Map(m => m.NomeFrances).Index(4);
-        Map(m => m.Abreviatura).TypeConverterOption.NullValues(string.Empty).Index(5);
+        Map(m => m.Abreviatura)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(5);
     }
 }
 ```
 
 ### Unidades Operacionais
-```csharp title="Correios.DNEBasico.Importer/Mappings/UnidadeOperacionalMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/UnidadeOperacionalMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class UnidadeOperacionalMap : ClassMap<UnidadeOperacional>
@@ -361,13 +381,16 @@ public class UnidadeOperacionalMap : ClassMap<UnidadeOperacional>
         Map(m => m.Endereco).Index(6);
         Map(m => m.Cep).Index(7);
         Map(m => m.CaixasPostais).Index(8);
-        Map(m => m.NomeAbreviado).TypeConverterOption.NullValues(string.Empty).Index(9);
+        Map(m => m.NomeAbreviado)
+            .TypeConverterOption
+            .NullValues(string.Empty)
+            .Index(9);
     }
 }
 ```
 
 ### Variações de Bairros
-```csharp title="Correios.DNEBasico.Importer/Mappings/VariacaoBairroMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/VariacaoBairroMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class VariacaoBairroMap : ClassMap<VariacaoBairro>
@@ -382,7 +405,7 @@ public class VariacaoBairroMap : ClassMap<VariacaoBairro>
 ```
 
 ### Variações de Localidades
-```csharp title="Correios.DNEBasico.Importer/Mappings/VariacaoLocalidadeMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/VariacaoLocalidadeMap.cs"
 
 namespace Correios.DneBasico.Importer.Mappings;
 
@@ -398,7 +421,7 @@ public class VariacaoLocalidadeMap : ClassMap<VariacaoLocalidade>
 ```
 
 ### Variações de Logradouros
-```csharp title="Correios.DNEBasico.Importer/Mappings/VariacaoLogradouroMap.cs"
+```csharp title="Correios.DneBasico.Importer/Mappings/VariacaoLogradouroMap.cs"
 namespace Correios.DneBasico.Importer.Mappings;
 
 public class VariacaoLogradouroMap : ClassMap<VariacaoLogradouro>
@@ -415,9 +438,9 @@ public class VariacaoLogradouroMap : ClassMap<VariacaoLogradouro>
 
 Arquivos de mapeadores criados! No próximo passo, iremos criar a lógica para ler os arquivos TXT utilizando o CSVHelper e mapear os dados para as classes correspondentes.
 
-A primeira coisa que vamos fazer é adicionar um arquivo `appsettings.json` no projeto `Correios.DNEBasico.Importer` para armazenar a string de conexão com o banco de dados PostgreSQL:
+A primeira coisa que vamos fazer é adicionar um arquivo `appsettings.json` no projeto `Correios.DneBasico.Importer` para armazenar a string de conexão com o banco de dados PostgreSQL:
 
-```json title="Correios.DNEBasico.Importer/appsettings.json"
+```json title="Correios.DneBasico.Importer/appsettings.json"
 {
   "ConnectionStrings": {
     "eDne": "Host=localhost;Database=edne;Username=seu_usuario;Password=sua_senha"
@@ -426,37 +449,35 @@ A primeira coisa que vamos fazer é adicionar um arquivo `appsettings.json` no p
 }
 ```
 
-Altere a conexão conforme o seu ambiente. No Github do projeto, disponibilizarei o código completo do projeto `Correios.DNEBasico.Importer` com a lógica para ler os arquivos TXT e salvar os dados no banco de dados que estará rodando em um container Docker. Não irei detalhar essa parte aqui no artigo para não ficar muito extenso, mas você pode conferir o código completo no repositório do projeto.
+Altere a conexão conforme o seu ambiente. No Github do projeto, disponibilizarei o código completo do projeto `Correios.DneBasico.Importer` com a lógica para ler os arquivos TXT e salvar os dados no banco de dados que estará rodando em um container Docker. Não irei detalhar essa parte aqui no artigo para não ficar muito extenso, mas você pode conferir o código completo no repositório do projeto.
 
 A configuração `RunOnStart` será utilizada para indicar se a importação dos dados deve ser executada automaticamente ao iniciar o aplicativo. Isso é útil para evitar execuções acidentais durante o desenvolvimento.
 
-Adicione um diretório chamado `Arquivos` na raiz do projeto `Correios.DNEBasico.Importer` e copie os arquivos TXT da base DNE Básico para esse diretório.
+Adicione um diretório chamado `Arquivos` na raiz do projeto `Correios.DneBasico.Importer` e copie os arquivos TXT da base DNE Básico para esse diretório.
 
 :::warning
 Garanta que os arquivos estejam configurados para serem copiados para o diretório de saída. Para isso, selecione todos os arquivos TXT no Solution Explorer, clique com o botão direito e selecione "Properties". Em seguida, defina a propriedade "Copy to Output Directory" como "Copy if newer". Faça o mesmo para o arquivo `appsettings.json`.
 :::
 
 ## Criando a migração inicial
-No projeto `Correios.DNEBasico.Data`, abra o terminal do Visual Studio (View > Terminal) e execute o seguinte comando para criar a migração inicial:
+Adicione os seguintes pacotes NuGet no projeto `Correios.DneBasico.Data`:
+- `Microsoft.EntityFrameworkCore.Design 9.0.11`
+- `Microsoft.EntityFrameworkCore.Relational 9.0.11`
+- `Microsoft.Extensions.Configuration.Json 9.0.11`
+
+No projeto `Correios.DneBasico.Data`, abra o terminal do Visual Studio (View > Terminal) e execute o seguinte comando para criar a migração inicial:
 
 ```bash
 dotnet-ef migrations add Initial
 ```
 
-Vixi! Deu ruim, não é? O erro ocorre porque o EF Core não consegue encontrar o provedor do banco de dados PostgreSQL. Para resolver isso, precisamos adicionar alguns pacotes NuGet no projeto `Correios.DNEBasico.Data`.
+Vixi! Deu ruim, não é? A grosso modo: O erro ocorre porque o EF Core não consegue encontrar o provedor do banco de dados PostgreSQL. Para resolver isso, precisaremmos realizar algumas configurações no projeto `Correios.DneBasico.Data`.
 
-Adicione os seguintes pacotes NuGet no projeto `Correios.DNEBasico.Data`:
-- `Microsoft.EntityFrameworkCore`
-- `Microsoft.EntityFrameworkCore.Design`
-- `Microsoft.Extensions.Configuration.Json`
-- `Npgsql.EntityFrameworkCore.PostgreSQL`
-- `Microsoft.EntityFrameworkCore.Tools`
+Crairemos nossas migrations no projeto `Correios.DneBasico.Data`, mas a string de conexão, por enquanto, está no projeto `Correios.DneBasico.Importer`. Para resolver isso, precisamos criar uma classe que implemente a interface `IDesignTimeDbContextFactory<TContext>` do EF Core, onde `TContext` é o nosso DbContext `DneBasicoDbContext`. Essa classe será responsável por criar uma instância do DbContext durante o processo de migração.
 
-Vamos criar nossas migrations no projeto `Correios.DNEBasico.Data`, mas a string de conexão, por enquanto, está no projeto `Correios.DNEBasico.Importer`. Para resolver isso, precisamos criar uma classe que implemente a interface `IDesignTimeDbContextFactory<TContext>` do EF Core, onde `TContext` é o nosso DbContext `DneBasicoDbContext`. Essa classe será responsável por criar uma instância do DbContext durante o processo de migração.
+Primeiro, vamos criar um arquivo `appsettings.json` no projeto `Correios.DneBasico.Data` com a mesma configuração de conexão que criamos no projeto `Correios.DneBasico.Importer`:
 
-Primeiro, vamos criar um arquivo `appsettings.json` no projeto `Correios.DNEBasico.Data` com a mesma configuração de conexão que criamos no projeto `Correios.DNEBasico.Importer`:
-
-```json title="Correios.DNEBasico.Data/appsettings.json"
+```json title="Correios.DneBasico.Data/appsettings.json"
 {
   "ConnectionStrings": {
     "eDne": "Host=localhost;Database=edne;Username=seu_usuario;Password=sua_senha"
@@ -464,12 +485,17 @@ Primeiro, vamos criar um arquivo `appsettings.json` no projeto `Correios.DNEBasi
 }
 ```
 
-Lembre-se de marcar o arquivo para ser copiado para o diretório de saída, assim como fizemos no projeto `Correios.DNEBasico.Importer`.
+Lembre-se de marcar o arquivo para ser copiado para o diretório de saída, assim como fizemos no projeto `Correios.DneBasico.Importer`.
 
-Agora, crie a classe `DneBasicoDbContextFactory` dentro do diretório `Contexts` no projeto `Correios.DNEBasico.Data` com o seguinte conteúdo:
+Agora, crie a classe `DneBasicoDbContextFactory` dentro do diretório `Contexts` no projeto `Correios.DneBasico.Data` com o seguinte conteúdo:
 
 
-```csharp title="Correios.DNEBasico.Data/Contexts/DneBasicoDbContextFactory.cs"
+```csharp title="Correios.DneBasico.Data/Contexts/DneBasicoDbContextFactory.cs"
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+
+namespace Correios.DneBasico.Data.Contexts;
+
 public class DneBasicoDbContextFactory : IDesignTimeDbContextFactory<DneBasicoDbContext>
 {
     public DneBasicoDbContext CreateDbContext(string[] args)
@@ -481,8 +507,7 @@ public class DneBasicoDbContextFactory : IDesignTimeDbContextFactory<DneBasicoDb
 
         var optionsBuilder = new DbContextOptionsBuilder<DneBasicoDbContext>();
 
-        var connectionString = configuration.GetConnectionString("eDNE")
-            ?? "Host=localhost;Database=edne;Username=seu_usuario;Password=sua_senha";
+        var connectionString = configuration.GetConnectionString("eDNE");
 
         optionsBuilder.UseNpgsql(connectionString);
 
@@ -499,12 +524,12 @@ Agora, volte ao terminal do Visual Studio e execute novamente o comando para cri
 dotnet-ef migrations add Initial
 ```
 
-Dessa vez, a migração deve ser criada com sucesso. Não será necessário aplicar a migração agora, pois o projeto `Correios.DNEBasico.Importer` irá garantir que o banco de dados esteja atualizado ao iniciar a importação dos dados.
+Dessa vez, a migração deve ser criada com sucesso. Não será necessário aplicar a migração agora, pois o projeto `Correios.DneBasico.Importer` irá garantir que o banco de dados esteja atualizado ao iniciar a importação dos dados.
 
 ## Bônus: Dados de Estados na migração
 No artigo anterior, criamos a entidade `Estado` para armazenar os estados do Brasil. Podemos aproveitar a migração inicial para inserir os dados dos estados diretamente no banco de dados já que esses dados não são fornecidos nos arquivos TXT da base DNE Básico. Para isso, abra o arquivo com o DbContext `DneBasicoDbContext.cs` e adicione o seguinte código para o método `OnModelCreating`:
 
-```csharp title="Correios.DNEBasico.Data/Contexts/DneBasicoDbContext.cs"
+```csharp title="Correios.DneBasico.Data/Contexts/DneBasicoDbContext.cs"
 // ... código existente ...
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
@@ -556,14 +581,12 @@ Isso irá inserir os dados dos estados na tabela `Estados` quando a migração f
 ## Classe EdneImporter
 Criaremos uma classe chamada `EdneImporter` que será responsável por resolver toda a lógica de importação dos dados. Essa classe irá utilizar o CSVHelper e mapear os dados para salvarmos utilizando o DbContext.
 
-Precisamos adicionar referências ao projeto `Correios.DNEBasico.Data` no projeto `Correios.DNEBasico.Importer`, e instalar os pacotes NuGet `EFCore.BulkExtensions`, `Microsoft.Extensions.Configuration` e `Microsoft.EntityFrameworkCore` no projeto `Correios.DNEBasico.Importer`.
+Precisamos adicionar referências ao projeto `Correios.DneBasico.Data` no projeto `Correios.DneBasico.Importer`, e instalar os pacotes NuGet `EFCore.BulkExtensions 9.0.2` e `Microsoft.Extensions.Configuration 9.0.11` no projeto `Correios.DneBasico.Importer`.
 
 
-```csharp title="Correios.DNEBasico.Importer/EdneImporter.cs" showLineNumbers="true"
+```csharp title="Correios.DneBasico.Importer/EdneImporter.cs" showLineNumbers="true"
 using Correios.DneBasico.Data.Contexts;
-using CsvHelper;
 using EFCore.BulkExtensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Globalization;
@@ -619,13 +642,13 @@ public class EdneImporter
                 using (var csv = new CsvReader(reader, csvConfig))
                 {
                     csv.Context.RegisterClassMap<TMap>();
-                    var records = csv.GetRecords<TEntity>();                   
+                    var records = csv.GetRecords<TEntity>();
 
                     foreach (var batch in records.Chunk(BATCH_SIZE))
                     {
                         using var scope = _serviceProvider.CreateScope();
                         using var context = scope.ServiceProvider.GetRequiredService<DneBasicoDbContext>();
-                        
+
                         context.BulkInsert(batch.ToList());
                         counter += batch.Length;
                         Console.WriteLine("{0}", counter);
@@ -655,7 +678,7 @@ public class EdneImporter
 }
 ```
 
-A classe `EdneImporter` possui um método genérico `ImportarArquivoCsv<TEntity, TMap>` que recebe o nome do arquivo a ser importado, onde `TEntity` é a classe que representa a entidade e `TMap` é o mapeador correspondente. Iremos utilizar essa classe no projeto `Correios.DNEBasico.Importer`, no arquivo `Program.cs`, para importar cada um dos arquivos TXT da base DNE Básico.
+A classe `EdneImporter` possui um método genérico `ImportarArquivoCsv<TEntity, TMap>` que recebe o nome do arquivo a ser importado, onde `TEntity` é a classe que representa a entidade e `TMap` é o mapeador correspondente. Iremos utilizar essa classe no projeto `Correios.DneBasico.Importer`, no arquivo `Program.cs`, para importar cada um dos arquivos TXT da base DNE Básico.
 
 O `csvConfig` define as configurações do CSVHelper, como o delimitador (@), a cultura (InvariantCulture), a codificação (Latin1) e outras opções.
 
@@ -665,9 +688,9 @@ Dentro do método, utilizamos um loop para ler os arquivos que correspondem ao n
 
 Classe de importação criada! No próximo passo, iremos utilizar essa classe no arquivo `Program.cs` para importar os dados.
 
-Altere o arquivo `Program.cs` no projeto `Correios.DNEBasico.Importer` para o seguinte conteúdo:
+Altere o arquivo `Program.cs` no projeto `Correios.DneBasico.Importer` para o seguinte conteúdo:
 
-```csharp title="Correios.DNEBasico.Importer/Program.cs"
+```csharp title="Correios.DneBasico.Importer/Program.cs"
 using Correios.DneBasico.Data.Contexts;
 using Correios.DneBasico.Importer;
 using Correios.DneBasico.Importer.Mappings;
@@ -700,8 +723,9 @@ using (var scope = serviceProvider.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DneBasicoDbContext>();
 
-    // CUIDADO! Apaga os dados
-    dbContext.Database.EnsureDeleted();
+    // Se precisar recriar o banco de dados, descomente a linha abaixo
+    // CUIDADO! Apaga a base e todos os dados
+    // dbContext.Database.EnsureDeleted();
 
     // Aplica as migrations
     dbContext.Database.Migrate();
@@ -758,11 +782,11 @@ Depois, criamos uma instância do `EdneImporter` e chamamos o método `ImportarA
 O tempo total de execução é medido e exibido ao final do processo de importação.
 
 ## Hora de rodar!
-Agora que tudo está pronto, vamos rodar o projeto `Correios.DNEBasico.Importer` para importar os dados da base DNE Básico para o banco de dados PostgreSQL.
+Agora que tudo está pronto, vamos rodar o projeto `Correios.DneBasico.Importer` para importar os dados da base DNE Básico para o banco de dados PostgreSQL.
 
 Antes de rodar, certifique-se de que o banco de dados PostgreSQL está rodando e que a string de conexão no arquivo `appsettings.json` está correta.
 
-Execute o projeto `Correios.DNEBasico.Importer`. O processo de importação começará e você verá o progresso no console. E voilá! Que `erro` é esse? 
+Execute o projeto `Correios.DneBasico.Importer`. O processo de importação começará e você verá o progresso no console. E voilá! Que `erro` é esse? 
 
 ```
 Npgsql.PostgresException: '23503: insert or update on table "localidades" violates foreign key constraint "FK_localidades_localidades_loc_nu_sub"
@@ -782,7 +806,7 @@ if (typeof(TEntity) == typeof(Localidade))
 }
 ```
 
-Não é a solução mais elegante, mas resolve o problema de forma rápida. Agora, rode novamente o projeto `Correios.DNEBasico.Importer`. Cruze os dedos e torça para não aparecer mais nenhum erro!
+Não é a solução mais elegante, mas resolve o problema de forma rápida. Agora, rode novamente o projeto `Correios.DneBasico.Importer`. Cruze os dedos e torça para não aparecer mais nenhum erro!
 
 1, 2, 3... Rodando .... e.... Novo erro!
 
@@ -804,7 +828,7 @@ if (typeof(TEntity) == typeof(FaixaCaixaPostalUop))
 }
 ```
 
-Novamente, não é a solução mais elegante, mas resolve o problema de forma rápida. Agora, rode novamente o projeto `Correios.DNEBasico.Importer`. Torça para não aparecer mais nenhum erro!
+Novamente, não é a solução mais elegante, mas resolve o problema de forma rápida. Agora, rode novamente o projeto `Correios.DneBasico.Importer`. Torça para não aparecer mais nenhum erro!
 
 Se você seguiu todos os passos corretamente, a importação deve ser concluída com sucesso!
 Dependendo do desempenho do seu computador e do banco de dados, o processo pode levar algum tempo, pois estamos importando uma grande quantidade de dados. No meu caso, levou cerca de 30 segundos para importar todos os dados.
@@ -893,9 +917,9 @@ union
 
 Analisando o script, temos 7 consultas unidas por `UNION`, cada uma consultando uma das tabelas mencionadas nas instruções dos Correios. Iremos adotar uma estratégia um pouco diferente, criando uma tabela chamada `ceps` e populando essa tabela com os dados unificados. Dessa forma teremos uma tabela "estática" que poderá ser consultada de forma rápida e eficiente.
 
-No projeto `Correios.DNEBasico.Domain`, crie uma enumeração chamada `TipoCep` dentro do diretório `Enums`:
+No projeto `Correios.DneBasico.Domain`, crie uma enumeração chamada `TipoCep` dentro do diretório `Enums`:
 
-```csharp title="Correios.DNEBasico.Domain/Enums/TipoCep.cs"
+```csharp title="Correios.DneBasico.Domain/Enums/TipoCep.cs"
 using System.ComponentModel;
 
 namespace Correios.DneBasico.Domain.Enums;
@@ -936,7 +960,7 @@ public enum TipoCep
 
 e em seguida, crie a entidade `Cep` dentro do diretório `Entities`:
 
-```csharp title="Correios.DNEBasico.Domain/Entities/Cep.cs"
+```csharp title="Correios.DneBasico.Domain/Entities/Cep.cs"
 using Correios.DneBasico.Domain.Enums;
 
 namespace Correios.DneBasico.Domain.Entities;
@@ -1023,9 +1047,9 @@ public class Cep
 }
 ```
 
-No projeto `Correios.DNEBasico.Data`, crie o arquivo de configuração `CepConfiguration` dentro do diretório `Configurations`:
+No projeto `Correios.DneBasico.Data`, crie o arquivo de configuração `CepConfiguration` dentro do diretório `Configurations`:
 
-```csharp title="Correios.DNEBasico.Data/Configurations/CepConfiguration.cs"
+```csharp title="Correios.DneBasico.Data/Configurations/CepConfiguration.cs"
 namespace Correios.DneBasico.Data.Configurations;
 
 public class CepConfiguration : IEntityTypeConfiguration<Cep>
@@ -1123,7 +1147,7 @@ A estrutura da tabela `ceps` ficará com os seguintes campos:
 
 No arquivo `DneBasicoDbContext.cs`, adicione a propriedade DbSet para a entidade `Cep`:
 
-```csharp title="Correios.DNEBasico.Data/Contexts/DneBasicoDbContext.cs"
+```csharp title="Correios.DneBasico.Data/Contexts/DneBasicoDbContext.cs"
 public DbSet<Cep> Ceps { get; set; } = default!;
 ```
 
@@ -1133,9 +1157,9 @@ Agora, crie uma nova migração para adicionar a tabela `ceps` ao banco de dados
 dotnet-ef migrations add CreateCepsTable
 ```
 
-No nosso projeto `Correios.DNEBasico.Importer`, iremos adicionar um método para popular a tabela `ceps` com os dados unificados. Adicione o seguinte método na classe `EdneImporter`:
+No nosso projeto `Correios.DneBasico.Importer`, iremos adicionar um método para popular a tabela `ceps` com os dados unificados. Adicione o seguinte método na classe `EdneImporter`:
 
-```csharp title="Correios.DNEBasico.Importer/EdneImporter.cs"
+```csharp title="Correios.DneBasico.Importer/EdneImporter.cs"
 public async Task PovoarTabelaUnificadaAsync()
 {
     Console.WriteLine($"==========================================================");
@@ -1263,13 +1287,13 @@ public async Task PovoarTabelaUnificadaAsync()
 }
 ```
 
-No arquivo `Program.cs` do projeto `Correios.DNEBasico.Importer`, após a importação dos arquivos TXT e antes da chamada para parar o cronômetro `watch.Stop()`, chame o método `PovoarTabelaUnificadaAsync`:
+No arquivo `Program.cs` do projeto `Correios.DneBasico.Importer`, após a importação dos arquivos TXT e antes da chamada para parar o cronômetro `watch.Stop()`, chame o método `PovoarTabelaUnificadaAsync`:
 
-```csharp title="Correios.DNEBasico.Importer/Program.cs"
+```csharp title="Correios.DneBasico.Importer/Program.cs"
 await edne.PovoarTabelaUnificadaAsync();
 ```
 
-Execute novamente o projeto `Correios.DNEBasico.Importer`. A tabela `ceps` será criada e populada com os dados unificados.
+Execute novamente o projeto `Correios.DneBasico.Importer`. A tabela `ceps` será criada e populada com os dados unificados.
 
 ![Tabela unificada](../../../static/img/blog/estrutura-base-dados-cep/tabela-unificada.png)
 

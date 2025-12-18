@@ -6,6 +6,7 @@ date: 2025-12-01
 tags: ["correios", "ceps", "banco-de-dados", "dotnet"]
 draft: false
 toc_max_heading_level: 3
+image: /img/blog/estrutura-base-dados-cep/og-edne-parte-1.png
 ---
 
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 1 de 3
@@ -2215,6 +2216,8 @@ Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correi
 ## Outras partes desta série
 - [Estrutura da Base de CEPs dos Correios - parte 2 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2)
 
+## Código Fonte
+O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)
 
 ## Referências
 - [Correios - Marketing Direto](https://www.correios.com.br/enviar/marketing-direto/marketing) 

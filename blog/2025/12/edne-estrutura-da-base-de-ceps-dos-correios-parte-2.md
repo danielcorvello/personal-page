@@ -6,6 +6,7 @@ date: 2025-12-17
 tags: ["correios", "ceps", "banco-de-dados", "dotnet"]
 draft: false
 toc_max_heading_level: 3
+image: /img/blog/estrutura-base-dados-cep/og-edne-parte-2.png
 ---
 
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 2 de 3
@@ -449,7 +450,7 @@ A primeira coisa que vamos fazer é adicionar um arquivo `appsettings.json` no p
 }
 ```
 
-Altere a conexão conforme o seu ambiente. No Github do projeto, disponibilizarei o código completo do projeto `Correios.DneBasico.Importer` com a lógica para ler os arquivos TXT e salvar os dados no banco de dados que estará rodando em um container Docker. Não irei detalhar essa parte aqui no artigo para não ficar muito extenso, mas você pode conferir o código completo no repositório do projeto.
+Altere a conexão conforme o seu ambiente. No [Github do projeto](https://github.com/danielcorvello/Correios.DneBasico), disponibilizo o código completo do projeto `Correios.DneBasico.Importer` com a lógica para ler os arquivos TXT e salvar os dados no banco de dados que estará rodando em um container Docker. Não irei detalhar essa parte aqui no artigo para não ficar muito extenso, mas você pode conferir o código completo no repositório do projeto.
 
 A configuração `RunOnStart` será utilizada para indicar se a importação dos dados deve ser executada automaticamente ao iniciar o aplicativo. Isso é útil para evitar execuções acidentais durante o desenvolvimento.
 
@@ -1303,6 +1304,9 @@ Neste artigo, criamos um importador para a base DNE Básico dos Correios, utiliz
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)
+
+## Código Fonte
+O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)
 
 ## Referências
 - [Correios - Marketing Direto](https://www.correios.com.br/enviar/marketing-direto/marketing) 

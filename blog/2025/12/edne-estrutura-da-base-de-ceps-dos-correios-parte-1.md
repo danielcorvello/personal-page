@@ -2261,6 +2261,7 @@ Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correi
 
 ## Outras partes desta série
 - [Estrutura da Base de CEPs dos Correios - parte 2 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2)
+- [Estrutura da Base de CEPs dos Correios - parte 3 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-3)
 
 ## Código Fonte
 O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)

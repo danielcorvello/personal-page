@@ -1304,6 +1304,7 @@ Neste artigo, criamos um importador para a base DNE Básico dos Correios, utiliz
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)
+- [Estrutura da Base de CEPs dos Correios - parte 3 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-3)
 
 ## Código Fonte
 O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)

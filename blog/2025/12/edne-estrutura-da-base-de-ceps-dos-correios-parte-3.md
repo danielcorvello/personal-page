@@ -4,7 +4,7 @@ title: "e-DNE - Estrutura da Base de CEPs dos Correios - parte 3 de 3"
 authors: ["corvello"]
 date: 2025-12-23
 tags: ["correios", "ceps", "banco-de-dados", "dotnet", "fastendpoints"]
-draft: true
+draft: false
 toc_max_heading_level: 3
 image: /img/blog/estrutura-base-dados-cep/og-edne-parte-3.png
 ---
@@ -93,7 +93,6 @@ Antes de saírmos "codando", vamos organizar a estrutura do projeto e delimitar 
 - Caixas Postais Comunitárias (`GetCaixasPostaisComunitarias`)
 - Ceps (`GetCeps` e `GetCep(cep)`)
 - Estados (`GetEstados`)
-- Municípios (`GetMunicipios`)
 - Grandes Usuários (`GetGrandesUsuarios`)
 - Localidades (`GetLocalidades`)
 - Logradouros (`GetLogradouros`)
@@ -751,9 +750,10 @@ public sealed class GetBairrosEndpoint : Endpoint<GetBairrosRequest, PagedRespon
 
         Summary(s =>
         {
-            
-            s.RequestParam(r => r.OrderBy, string.Format(ApiConstants.FILTER_SUMMARY, filterableFields));
-            s.RequestParam(r => r.Filter, string.Format(ApiConstants.ORDERBY_SUMMARY, orderableFields));
+            s.RequestParam(r => r.OrderBy, 
+                string.Format(ApiConstants.FILTER_SUMMARY, filterableFields));
+            s.RequestParam(r => r.Filter, 
+                string.Format(ApiConstants.ORDERBY_SUMMARY, orderableFields));
         });
     }
 
@@ -789,16 +789,25 @@ public sealed class GetBairrosEndpoint : Endpoint<GetBairrosRequest, PagedRespon
                 NomeAbreviado = c.NomeAbreviado,
                 LocalidadeId = c.LocalidadeId,
                 Localidade = c.Localidade.Nome,
-                Variacoes = c.Variacoes!.Select(v => v.Denominacao).ToList(),
-                FaixasCep = c.Faixas!.Select(f => new FaixaCepResponse(f.CepInicial, f.CepFinal)).ToList()
+                Variacoes = c.Variacoes!
+                                .Select(v => v.Denominacao)
+                                .ToList(),
+                FaixasCep = c.Faixas!
+                                .Select(f => new FaixaCepResponse(
+                                    f.CepInicial, 
+                                    f.CepFinal))
+                                .ToList()
             });
 
         var totalCount = await query.CountAsync(ct);
 
-        query = query
-            .ApplyPaging(gridifyQuery);
+        query = query.ApplyPaging(gridifyQuery);
 
-        var result = await query.ToPagedResultAsync(totalCount, gridifyQuery.Page, gridifyQuery.PageSize, ct);
+        var result = await query.ToPagedResultAsync(
+            totalCount,
+            gridifyQuery.Page,
+            gridifyQuery.PageSize,
+            ct);
 
         await Send.OkAsync(result, cancellation: ct);
         return;
@@ -807,7 +816,6 @@ public sealed class GetBairrosEndpoint : Endpoint<GetBairrosRequest, PagedRespon
 
 public record GetBairrosRequest : QueryListRequest
 {
-
 }
 
 public class GetBairrosRequestValidator : Validator<GetBairrosRequest>
@@ -880,9 +888,314 @@ class GetBairrosRequestMapper : GridifyMapper<Bairro>
 
 Podemos seguir o mesmo padrão para criar os demais endpoints. Recomendo que você crie os endpoints restantes seguindo o exemplo do endpoint de bairros, adaptando as consultas e mapeamentos conforme necessário para cada entidade.
 
+## Endpoint de Caixas Postais Comunitárias
+Crie um diretório chamado `CaixasPostaisComunitarias` dentro do diretório `Features` e adicione uma classe com o nome `GetCaixasPostaisComunitariasEndpoint.cs`. Inclua o seguinte código na classe:
+
+```csharp title="Correios.DneBasico.Api/Features/CaixasPostaisComunitarias/GetCaixasPostaisComunitariasEndpoint.cs"
+namespace Correios.DneBasico.Api.Features.CaixasPostaisComunitarias;
+
+/// <summary>
+/// Retorna uma lista paginada de caixas postais comunitárias, com suporte a filtragem e ordenação.
+/// </summary>
+public sealed class GetCaixasPostaisComunitariasEndpoint : Endpoint<GetCaixasPostaisComunitariasRequest, PagedResponse<GetCaixasPostaisComunitariasResponse>>
+{
+    private readonly DneBasicoDbContext _dbContext;
+
+    public GetCaixasPostaisComunitariasEndpoint(DneBasicoDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public override void Configure()
+    {
+        Get($"/{ApiConstants.RouteNames.CAIXAS_POSTAIS_COMUNITARIAS}");
+        AllowAnonymous();
+
+        Description(b => b
+            .WithTags(ApiConstants.Tags.BASE)
+            .Accepts<GetCaixasPostaisComunitariasRequest>()
+            .Produces<PagedResponse<GetCaixasPostaisComunitariasResponse>>((int)HttpStatusCode.OK, MediaTypeNames.Application.Json)
+            .WithDisplayName(nameof(GetCaixasPostaisComunitariasEndpoint)),
+        clearDefaults: true);
+
+        var mapper = new GetCaixasPostaisComunitariasRequestMapper();
+        var filterableFields = mapper.GetMappingList();
+        var orderableFields = mapper.GetMappingList();
+
+        Summary(s =>
+        {
+            s.RequestParam(r => r.OrderBy,
+                string.Format(ApiConstants.FILTER_SUMMARY, filterableFields));
+            s.RequestParam(r => r.Filter,
+                string.Format(ApiConstants.ORDERBY_SUMMARY, orderableFields));
+        });
+    }
+
+    public override async Task HandleAsync(GetCaixasPostaisComunitariasRequest Request,
+                                           CancellationToken ct)
+    {
+        var gridifyQuery = new GridifyQuery
+        {
+            Filter = Request.Filter,
+            OrderBy = Request.OrderBy ?? nameof(GetCaixasPostaisComunitariasResponse.Nome),
+            Page = Request.PageNumber ?? 1,
+            PageSize = Request.PageSize ?? 100
+        };
+        var mapper = new GetCaixasPostaisComunitariasRequestMapper();
+
+        var isValid = gridifyQuery.IsValid(mapper);
+        if (!isValid)
+        {
+            AddError(ApiConstants.GRIDYFY_INVALID_QUERY);
+            await Send.ErrorsAsync(cancellation: ct);
+            return;
+        }
+
+        var query = _dbContext.CaixasPostaisComunitarias
+            .AsNoTracking()
+            .ApplyFiltering(gridifyQuery.Filter, mapper)
+            .ApplyOrdering(gridifyQuery.OrderBy, mapper)
+            .Select(c => new GetCaixasPostaisComunitariasResponse
+            {
+                Id = c.Id,
+                Uf = c.Uf,
+                Nome = c.Nome,
+                Cep = c.Cep,
+                Endereco = c.Endereco,
+                Faixas = c.Faixas!
+                        .Select(f => new FaixaCaixaPostalResponse(
+                            f.CaixaPostalInicial,
+                            f.CaixaPostalFinal))
+                        .ToList(),
+                LocalidadeId = c.LocalidadeId,
+                Localidade = c.Localidade.Nome
+            });
+
+        var totalCount = await query.CountAsync(ct);
+
+        query = query.ApplyPaging(gridifyQuery);
+
+        var result = await query.ToPagedResultAsync(
+            totalCount,
+            gridifyQuery.Page,
+            gridifyQuery.PageSize,
+            ct);
+
+        await Send.OkAsync(result, cancellation: ct);
+        return;
+    }
+}
+
+public record GetCaixasPostaisComunitariasRequest : QueryListRequest
+{
+}
+
+public class GetCaixasPostaisComunitariasRequestValidator : Validator<GetCaixasPostaisComunitariasRequest>
+{
+    public GetCaixasPostaisComunitariasRequestValidator()
+    {
+        Include(new QueryListRequestValidator());
+    }
+}
+
+/// <summary>
+/// Response para retornar as caixas postais comunitárias.
+/// </summary>
+public record GetCaixasPostaisComunitariasResponse
+{
+    /// <summary>
+    /// Chave da caixa postal comunitária
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Nome da CPC
+    /// </summary>
+    public string Nome { get; set; } = default!;
+
+    /// <summary>
+    /// Endereço da CPC
+    /// </summary>
+    public string Endereco { get; set; } = default!;
+
+    /// <summary>
+    /// CEP da CPC
+    /// </summary>
+    public string Cep { get; set; } = default!;
+
+    /// <summary>
+    /// Localidade
+    /// </summary>
+    public string Localidade { get; set; } = default!;
+
+    /// <summary>
+    /// Sigla da UF
+    /// </summary>
+    public string Uf { get; set; } = default!;
+
+    /// <summary>
+    /// Faixas de Caixa Postal Comunitária
+    /// </summary>
+    public ICollection<FaixaCaixaPostalResponse> Faixas { get; set; } = [];
+
+    /// <summary>
+    /// Chave da localidade
+    /// </summary>
+    public int LocalidadeId { get; set; }
+};
+
+class GetCaixasPostaisComunitariasRequestMapper : GridifyMapper<CaixaPostalComunitaria>
+{
+    public GetCaixasPostaisComunitariasRequestMapper()
+    {
+        ClearMappings();
+
+        AddMap(nameof(GetCaixasPostaisComunitariasResponse.Id), o => o.Id);
+        AddMap(nameof(GetCaixasPostaisComunitariasResponse.Nome), o => o.Nome);
+        AddMap(nameof(GetCaixasPostaisComunitariasResponse.Uf), o => o.Uf);
+        AddMap(nameof(GetCaixasPostaisComunitariasResponse.Cep), o => o.Cep);
+        AddMap(nameof(GetCaixasPostaisComunitariasResponse.LocalidadeId), o => o.LocalidadeId);
+    }
+}
+```
+
+No diretório `Features/_Shared`, crie um novo arquivo chamado `FaixaCaixaPostalResponse.cs` e adicione o seguinte código:
+
+```csharp title="Correios.DneBasico.Api/Features/_Shared/FaixaCaixaPostalResponse.cs"
+namespace Correios.DneBasico.Api.Features._Shared;
+
+public record FaixaCaixaPostalResponse(string Inicial, string Final);
+```
+
+Como vimos, criar os endpoints restantes segue o mesmo padrão. Recomendo que você crie os endpoints de `Localidades` e `Estados` seguindo o exemplo dos endpoints de `Bairros` e `Caixas Postais Comunitárias`, adaptando as consultas e mapeamentos conforme necessário para cada entidade.
+
+Um endpoint que pode ser interessante criar é o endpoint de consulta de CEP, semelhante ao serviço disponibilizado pelo [ViaCEP](https://viacep.com.br/). Esse endpoint pode retornar informações detalhadas sobre um CEP específico, incluindo o bairro, localidade, UF, entre outros dados relevantes.
+
+## Endpoint de Consulta de CEP
+Crie um diretório chamado `Ceps` dentro do diretório `Features` e adicione uma classe com o nome `GetCepEndpoint.cs`. Inclua o seguinte código na classe:
+
+```csharp title="Correios.DneBasico.Api/Features/Ceps/GetCepEndpoint.cs"
+using Correios.DneBasico.Domain.Enums;
+
+namespace Correios.DneBasico.Api.Features.Ceps;
+
+/// <summary>
+/// Consulta um CEP específico.
+/// </summary>
+public class GetCepEndpoint : Endpoint<GetCepRequest, GetCepResponse>
+{
+    private readonly DneBasicoDbContext _dbContext;
+    public GetCepEndpoint(DneBasicoDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public override void Configure()
+    {
+        Get($"/{ApiConstants.RouteNames.CEPS}/{{Cep}}");
+        AllowAnonymous();
+
+        Description(b => b
+            .WithTags(ApiConstants.Tags.BASE)
+            .Accepts<GetCepRequest>()
+            .Produces<GetCepResponse>((int)HttpStatusCode.OK, MediaTypeNames.Application.Json)
+            .ProducesProblemFE<ProblemDetails>((int)HttpStatusCode.BadRequest)
+            .ProducesProblemFE<ProblemDetails>((int)HttpStatusCode.NotFound)
+            .WithDisplayName(nameof(GetCepEndpoint)),
+        clearDefaults: true);
+
+        Summary(s =>
+        {
+            s.Summary = "Consulta um CEP específico.";
+            s.Description = "Retorna os detalhes do CEP informado, se encontrado.";
+            s.Response((int)HttpStatusCode.BadRequest, "Retorna um erro de validação se o CEP for inválido.");
+            s.Response((int)HttpStatusCode.NotFound, "Retorna se o CEP não for encontrado na base de dados.");
+            s.ResponseExamples[StatusCodes.Status200OK] = new GetCepResponse(
+                Codigo: "01001000",
+                Ibge: "3550308",
+                Municipio: "São Paulo",
+                Uf: "SP",
+                Bairro: "Sé",
+                Distrito: null,
+                TipoLogradouro: "Praça",
+                Logradouro: "da Sé",
+                LogradouroCompleto: "Praça da Sé",
+                Complemento: "- lado ímpar",
+                Unidade: null,
+                Geral: false,
+                Tipo: TipoCep.LOG);
+        });
+    }
+
+    public override async Task HandleAsync(GetCepRequest req, CancellationToken ct)
+    {
+        var cep = await _dbContext.Ceps
+            .Where(c => c.Codigo == req.Cep)
+            .FirstOrDefaultAsync(ct);
+
+        if (cep is not null)
+        {
+            var response = new GetCepResponse(
+                Codigo: cep.Codigo,
+                Ibge: cep.Ibge,
+                Municipio: cep.Municipio,
+                Uf: cep.Uf,
+                Bairro: cep.Bairro,
+                Distrito: cep.Distrito,
+                TipoLogradouro: cep.TipoLogradouro,
+                Logradouro: cep.Logradouro,
+                LogradouroCompleto: cep.LogradouroCompleto,
+                Complemento: cep.Complemento,
+                Unidade: cep.Unidade,
+                Geral: cep.Geral,
+                Tipo: cep.Tipo);
+
+            await Send.OkAsync(response, cancellation: ct);
+            return;
+        }
+        else
+        {
+            await Send.NotFoundAsync(cancellation: ct);
+            return;
+        }
+    }
+}
+
+public record GetCepRequest(string Cep);
+
+public class GetCepRequestValidator : Validator<GetCepRequest>
+{
+    public GetCepRequestValidator()
+    {
+        RuleFor(x => x.Cep)
+            .NotEmpty().WithMessage("O CEP é obrigatório.")
+            .Matches(@"^\d{8}$").WithMessage("O CEP deve conter exatamente 8 dígitos numéricos.");
+    }
+}
+public record GetCepResponse(
+    string Codigo,
+    string Ibge,
+    string Municipio,
+    string Uf,
+    string? Bairro,
+    string? Distrito,
+    string? TipoLogradouro,
+    string? Logradouro,
+    string? LogradouroCompleto,
+    string? Complemento,
+    string? Unidade,
+    bool Geral,
+    TipoCep Tipo);
+```
+
+Esse endpoint, entre os sugeridos anteriormente, é o único que não segue o padrão de listagem com paginação, filtragem e ordenação. Ele é um endpoint de consulta direta, onde informamos o CEP na rota e retornamos os detalhes do CEP, se encontrado.
+
+Com isso criamos uma base para adicionarmos os endpoints restantes. Sinta-se à vontade para explorar e expandir a API conforme suas necessidades. Vou parar o artigo por aqui, mas espero que tenha sido útil para você entender como estruturar a base de CEPs dos Correios utilizando o FastEndpoints, Entity Framework Core e Gridify.
+
+O código completo do projeto´, incluindo todos os endpoints, está disponível no GitHub no repositório [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico). Se tiver alguma dúvida ou sugestão, fique à vontade para abrir uma issue ou contribuir com o projeto. Você também pode me contatar diretamente para discutir melhorias ou novas funcionalidades através do meu LinkedIn: [Daniel Corvello](https://www.linkedin.com/in/danielcorvello/).
 
 ## Conclusão
-
+Nesta série de artigos, exploramos a estrutura da base de CEPs dos Correios, como converte-la para um banco de dados relacional utilizando o Entity Framework Core, e como criar uma API RESTful utilizando o FastEndpoints. Também vimos como implementar paginação, filtragem e ordenação utilizando o Gridify, além de melhorar a documentação do Swagger. Espero que esses artigos tenham sido úteis para você. Se você gostou do conteúdo, não hesite em compartilhar e contribuir para o crescimento da comunidade de desenvolvedores. Até a próxima!
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)

@@ -937,7 +937,7 @@ public enum TipoCep
     /// Logradouro
     /// </summary>
     [Description("Logradouro")]
-    lOG = 2,
+    LOG = 2,
 
     /// <summary>
     /// Grande Usuário

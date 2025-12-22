@@ -22,7 +22,16 @@ const config: Config = {
 
   plugins: [
     "plugin-image-zoom",
-    '@docusaurus/plugin-client-redirects'    
+    ['@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            to: '/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet',
+            from: ['/2025/11/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet'],
+          },
+        ],
+      },
+    ],
   ],
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future

@@ -1318,4 +1318,4 @@ O código fonte completo deste projeto está disponível no GitHub: [Correios.Dn
 ## Changelog
 | Data         |                    Atualização                    |
 | :----------- | :---------------------------------------------- | 
-| 23/12/2025 | Ajuste das nomenclaturas subordinada / subordinação. |
+| 22/12/2025 | Ajuste das nomenclaturas subordinada / subordinação. |

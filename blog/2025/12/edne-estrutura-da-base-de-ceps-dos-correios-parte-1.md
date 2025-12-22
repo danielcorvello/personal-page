@@ -2277,9 +2277,9 @@ O código fonte completo deste projeto está disponível no GitHub: [Correios.Dn
 | Data         |                    Atualização                    |
 | :----------- | :---------------------------------------------- | 
 | 17/12/2025 | Alteração das classes dos modelos para refletir as mudanças criadas após revisão durante a criação da parte 2 do artigo e inclusão do Arquivo Global. |
-| 23/12/2025 | Mudança na configuração da FaixasNumericasSeccionamento criando uma chave composta e adicionando a navigation property na entidade Logradouro. Pequenos ajustes nas nomenclaturas e summaries das propriedas das entidades. |
+| 22/12/2025 | Mudança na configuração da FaixasNumericasSeccionamento criando uma chave composta e adicionando a navigation property na entidade Logradouro. Pequenos ajustes nas nomenclaturas e summaries das propriedades das entidades. |
 
-<a id="notas-de-rodape"></a>
+## Notas de rodapé {#notas-de-rodape}
 <small>
 ¹ No DNE Básico, os arquivos podem ser encontrados em dois formatos: delimitados e fixos. No formato delimitado, os campos são separados por um caractere específico (neste caso, o arroba @), enquanto no formato fixo, cada campo possui um tamanho pré-definido. 
 </small>

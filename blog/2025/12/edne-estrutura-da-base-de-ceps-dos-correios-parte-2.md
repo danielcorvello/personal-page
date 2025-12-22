@@ -274,7 +274,7 @@ public class LocalidadeMap : ClassMap<Localidade>
         Map(m => m.Tipo)
             .TypeConverter<TipoLocalidadeConverter>()
             .Index(5);
-        Map(m => m.SubordinadaId).Index(6);
+        Map(m => m.SubordinacaoId).Index(6);
         Map(m => m.NomeAbreviado).Index(7);
         Map(m => m.Ibge)
             .TypeConverterOption
@@ -793,17 +793,17 @@ Execute o projeto `Correios.DneBasico.Importer`. O processo de importação come
 Npgsql.PostgresException: '23503: insert or update on table "localidades" violates foreign key constraint "FK_localidades_localidades_loc_nu_sub"
 ```
 
-Esse erro acontece porque na tabela `Localidades`, temos uma chave estrangeira `loc_nu_sub` que referencia a própria tabela `Localidades`. Isso significa que algumas localidades são subordinadas a outras localidades. Durante a importação, estamos tentando inserir uma localidade que referencia uma localidade subordinada que ainda não foi inserida no banco de dados. Para resolver esse problema, precisamos garantir que as localidades subordinadas sejam inseridas antes das localidades que as referenciam.
+Esse erro acontece porque na tabela `Localidades`, temos uma chave estrangeira `loc_nu_sub` que referencia a própria tabela `Localidades`. Isso significa que algumas localidades são subordinadas a outras localidades. Durante a importação, estamos tentando inserir uma localidade subordinada que referencia uma localidade que ainda não foi inserida no banco de dados. Para resolver esse problema, precisamos garantir que as localidades com subordinadas sejam inseridas antes das localidades que as referenciam.
 
-Vamos solucionar isso incluindo uma checagem de tipo de entidade no método `ImportarArquivoCsv` da classe `EdneImporter`. Se a entidade for do tipo `Localidade`, iremos ordenar os registros de forma que as localidades subordinadas sejam inseridas primeiro. No arquivo `EdneImporter.cs`, inclua a seguinte lógica dentro do método `ImportarArquivoCsv`, logo após `var records = csv.GetRecords<TEntity>();`:
+Vamos solucionar isso incluindo uma checagem de tipo de entidade no método `ImportarArquivoCsv` da classe `EdneImporter`. Se a entidade for do tipo `Localidade`, iremos ordenar os registros de forma que as localidades com subordinadas sejam inseridas primeiro. No arquivo `EdneImporter.cs`, inclua a seguinte lógica dentro do método `ImportarArquivoCsv`, logo após `var records = csv.GetRecords<TEntity>();`:
 
 ```csharp
 if (typeof(TEntity) == typeof(Localidade))
 {
     // Ordena os registros de Localidade por SubordinadaId = null primeiro, para evitar problemas de FK e depois por Id
-    records = records.OrderBy(r => ((Localidade)(object)r).SubordinadaId.HasValue)
-                             .ThenBy(r => ((Localidade)(object)r).SubordinadaId)
-                             .ThenBy(r => ((Localidade)(object)r).Id);
+    records = records.OrderBy(r => ((Localidade)(object)r).SubordinacaoId.HasValue)
+                         .ThenBy(r => ((Localidade)(object)r).SubordinacaoId)
+                         .ThenBy(r => ((Localidade)(object)r).Id);
 }
 ```
 
@@ -937,7 +937,7 @@ public enum TipoCep
     /// Logradouro
     /// </summary>
     [Description("Logradouro")]
-    lOG = 2,
+    LOG = 2,
 
     /// <summary>
     /// Grande Usuário
@@ -1304,6 +1304,7 @@ Neste artigo, criamos um importador para a base DNE Básico dos Correios, utiliz
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)
+- [Estrutura da Base de CEPs dos Correios - parte 3 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-3)
 
 ## Código Fonte
 O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)
@@ -1313,3 +1314,8 @@ O código fonte completo deste projeto está disponível no GitHub: [Correios.Dn
 - [Wikipédia - Código de Endereçamento Postal](https://pt.wikipedia.org/wiki/C%C3%B3digo_de_Endere%C3%A7amento_Postal) 
 - [Correios - Tudo sobre CEP](https://www.correios.com.br/enviar/precisa-de-ajuda/tudo-sobre-cep) 
 - [ViaCEP - Consulta CEP](https://viacep.com.br/)
+
+## Changelog
+| Data         |                    Atualização                    |
+| :----------- | :---------------------------------------------- | 
+| 23/12/2025 | Ajuste das nomenclaturas subordinada / subordinação. |

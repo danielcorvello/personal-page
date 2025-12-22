@@ -184,6 +184,8 @@ Tem como chave primária os campos `UFE_SG` e `UFE_CEP_INI`.
 Iremos relacionar essa tabela com a tabela de UFs através do campo `UFE_SG`.
 
 ```csharp title="Correios.DneBasico.Domain/Entities/FaixaCepEstado.cs"
+using System.Text.Json.Serialization;
+
 namespace Correios.DneBasico.Domain.Entities;
 
 /// <summary>
@@ -210,10 +212,21 @@ public class FaixaCepEstado
     /// <summary>
     /// Unidade Federativa (Estado)
     /// </summary>
+    [JsonIgnore]
     public Estado Estado { get; set; } = default!;
     #endregion
 }
 ```
+
+Inclua a seguinte propriedade na classe `Estado` para representar o relacionamento um-para-muitos entre `Estado` e `FaixaCepEstado`:
+
+```csharp title="Correios.DneBasico.Domain/Entities/Estado.cs"
+    /// <summary>
+    /// Faixas de CEP do Estado
+    /// </summary>
+    public ICollection<FaixaCepEstado> Faixas { get; set; } = [];
+```
+
 
 ```csharp title="Correios.DneBasico.Data/Configurations/FaixaCepEstadoConfiguration.cs"
 namespace Correios.DneBasico.Data.Configurations;
@@ -232,7 +245,7 @@ public class FaixaCepEstadoConfiguration : IEntityTypeConfiguration<FaixaCepEsta
             .HasMaxLength(2);
 
         builder.HasOne(l => l.Estado)
-            .WithMany()
+            .WithMany(l => l.Faixas)
             .HasForeignKey(l => l.Uf)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -375,17 +388,17 @@ namespace Correios.DneBasico.Domain.Entities;
 public class Localidade
 {
     /// <summary>
-    /// chave da localidade
+    /// Chave da localidade
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// sigla da UF
+    /// Sigla da UF
     /// </summary>
     public string Uf { get; set; } = default!;
 
     /// <summary>
-    /// nome da localidade
+    /// Nome da localidade
     /// </summary>
     public string Nome { get; set; } = default!;
 
@@ -395,7 +408,7 @@ public class Localidade
     public string? Cep { get; set; }
 
     /// <summary>
-    /// situação da localidade:
+    /// Situação da localidade:
     /// </summary>
     /// <remarks>
     /// 0 = Localidade não codificada em nível de Logradouro,
@@ -406,7 +419,7 @@ public class Localidade
     public SituacaoLocalidade Situacao { get; set; } = default!;
 
     /// <summary>
-    /// tipo de localidade
+    /// Tipo de localidade
     /// </summary>  
     /// <remarks>
     /// D - Distrito,
@@ -416,12 +429,12 @@ public class Localidade
     public TipoLocalidade Tipo { get; set; } = default!;
 
     /// <summary>
-    /// chave da localidade de subordinação (opcional)
+    /// Chave da localidade de subordinação (opcional)
     /// </summary>
-    public int? SubordinadaId { get; set; }
+    public int? SubordinacaoId { get; set; }
 
     /// <summary>
-    /// abreviatura do nome da localidade (opcional)
+    /// Abreviatura do nome da localidade (opcional)
     /// </summary>
     public string? NomeAbreviado { get; set; }
 
@@ -440,7 +453,7 @@ public class Localidade
     /// <summary>
     /// Localidade de subordinação
     /// </summary>
-    public Localidade? Subordinada { get; set; } = default!;
+    public Localidade? Subordinacao { get; set; } = default!;
     #endregion
 }
 ```
@@ -486,7 +499,7 @@ public class LocalidadeConfiguration : IEntityTypeConfiguration<Localidade>
         builder.Property(l => l.Tipo)
             .HasColumnName("loc_in_tipo_loc");
 
-        builder.Property(l => l.SubordinadaId)
+        builder.Property(l => l.SubordinacaoId)
             .HasColumnName("loc_nu_sub");
 
         builder.Property(l => l.NomeAbreviado)
@@ -560,12 +573,12 @@ namespace Correios.DneBasico.Domain.Entities;
 public class VariacaoLocalidade
 {
     /// <summary>
-    /// chave da localidade
+    /// Chave da localidade
     /// </summary>
     public int LocalidadeId { get; set; }
 
     /// <summary>
-    /// ordem da denominação
+    /// Ordem da denominação
     /// </summary>
     public int Ordem { get; set; }
 
@@ -663,6 +676,7 @@ public enum TipoFaixaCep
 
 ```csharp title="Correios.DneBasico.Domain/Entities/FaixaCepLocalidade.cs"
 using Correios.DneBasico.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Correios.DneBasico.Domain.Entities;
 
@@ -677,14 +691,9 @@ namespace Correios.DneBasico.Domain.Entities;
 public class FaixaCepLocalidade
 {
     /// <summary>
-    /// chave da localidade
+    /// Chave da localidade
     /// </summary>
     public int LocalidadeId { get; set; }
-
-    /// <summary>
-    /// Localidade
-    /// </summary>
-    public Localidade Localidade { get; set; } = default!;
 
     /// <summary>
     /// CEP inicial da localidade
@@ -697,11 +706,31 @@ public class FaixaCepLocalidade
     public string CepFinal { get; set; } = default!;
 
     /// <summary>
-    /// tipo de Faixa de CEP: T –Total do Município, C – Exclusiva da  Sede Urbana
+    /// Tipo de Faixa de CEP:
+    /// T –Total do Município, 
+    /// C – Exclusiva da  Sede Urbana
     /// </summary>
     public TipoFaixaCep TipoFaixa { get; set; } = default!;
+
+    #region Navigation Properties
+    /// <summary>
+    /// Localidade
+    /// </summary>
+    [JsonIgnore]
+    public Localidade Localidade { get; set; } = default!;
+    #endregion
 }
 ```
+
+Adicione a seguinte propriedade na classe `Localidade` para representar o relacionamento um-para-muitos entre `Localidade` e `FaixaCepLocalidade`:
+
+```csharp title="Correios.DneBasico.Domain/Entities/Localidade.cs"
+    /// <summary>
+    /// Faixas de CEP da Localidade
+    /// </summary>
+    public ICollection<FaixaCepLocalidade> Faixas { get; set; } = [];
+```
+
 
 ```csharp title="Correios.DneBasico.Data/Configurations/FaixaCepLocalidadeConfiguration.cs"
 namespace Correios.DneBasico.Data.Configurations;
@@ -850,12 +879,12 @@ namespace Correios.DneBasico.Domain.Entities;
 public class VariacaoBairro
 {
     /// <summary>
-    /// chave do bairro
+    /// Chave do bairro
     /// </summary>
     public int BairroId { get; set; }
 
     /// <summary>
-    /// ordem da denominação
+    /// Ordem da denominação
     /// </summary>
     public int Ordem { get; set; }
 
@@ -925,6 +954,8 @@ Faixa de CEP de Bairro
 Chave primária: BAI_NU, FCB_CEP_INI
 
 ```csharp title="Correios.DneBasico.Domain/Entities/FaixaCepBairro.cs"
+using System.Text.Json.Serialization;
+
 namespace Correios.DneBasico.Domain.Entities;
 
 /// <summary>
@@ -951,6 +982,7 @@ public class FaixaCepBairro
     /// <summary>
     /// Bairro
     /// </summary>
+    [JsonIgnore]
     public Bairro Bairro { get; set; } = default!;
     #endregion
 }
@@ -984,6 +1016,15 @@ public class FaixaCepBairroConfiguration : IEntityTypeConfiguration<FaixaCepBair
 }
 ```
 
+Inclua a seguinte propriedade na classe `Bairro` para representar o relacionamento um-para-muitos entre `Bairro` e `FaixaCepBairro`:
+
+```csharp title="Correios.DneBasico.Domain/Entities/Bairro.cs"
+    /// <summary>
+    /// Faixas de CEP do Bairro
+    /// </summary>
+    public ICollection<FaixaCepBairro> Faixas { get; set; } = [];
+```
+
 ### Caixa Postal Comunitária (CPC)
 Arquivo: LOG_CPC.TXT  
 Caixa Postal Comunitária(CPC) - são áreas rurais e/ou urbanas periféricas não atendidas pela distribuição domiciliária.
@@ -1009,27 +1050,27 @@ namespace Correios.DneBasico.Domain.Entities;
 public class CaixaPostalComunitaria
 {
     /// <summary>
-    /// chave da caixa postal comunitária
+    /// Chave da caixa postal comunitária
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// sigla da UF
+    /// Sigla da UF
     /// </summary>
     public string Uf { get; set; } = default!;
 
     /// <summary>
-    /// chave da localidade
+    /// Chave da localidade
     /// </summary>
     public int LocalidadeId { get; set; }
 
     /// <summary>
-    /// nome da CPC
+    /// Nome da CPC
     /// </summary>
     public string Nome { get; set; } = default!;
 
     /// <summary>
-    /// endereço da CPC
+    /// Endereço da CPC
     /// </summary>
     public string Endereco { get; set; } = default!;
 
@@ -1112,17 +1153,17 @@ namespace Correios.DneBasico.Domain.Entities;
 public class FaixaCaixaPostalComunitaria
 {
     /// <summary>
-    /// chave da caixa postal comunitária
+    /// Chave da caixa postal comunitária
     /// </summary>
     public int CaixaPostalComunitariaId { get; set; }
 
     /// <summary>
-    /// número inicial da caixa postal comunitária
+    /// Número inicial da caixa postal comunitária
     /// </summary>
     public string CaixaPostalInicial { get; set; } = default!;
 
     /// <summary>
-    /// número final da caixa postal comunitária
+    /// Número final da caixa postal comunitária
     /// </summary>
     public string CaixaPostalFinal { get; set; } = default!;
 
@@ -1531,17 +1572,17 @@ namespace Correios.DneBasico.Domain.Entities;
 public class FaixaNumericaSeccionamento
 {
     /// <summary>
-    /// chave do logradouro
+    /// Chave do logradouro
     /// </summary>
     public int LogradouroId { get; set; }
 
     /// <summary>
-    /// número inicial do seccionamento
+    /// Número inicial do seccionamento
     /// </summary>
     public string SeccionamentoInicial { get; set; } = default!;
 
     /// <summary>
-    /// número final do seccionamento
+    /// Número final do seccionamento
     /// </summary>
     public string SeccionamentoFinal { get; set; } = default!;
 
@@ -1566,6 +1607,16 @@ public class FaixaNumericaSeccionamento
 }
 ```
 
+Inclua a seguinte propriedade na classe `Logradouro` para representar o relacionamento um-para-muitos entre `Logradouro` e `FaixaNumericaSeccionamento`:
+
+```csharp title="Correios.DneBasico.Domain/Entities/Logradouro.cs"    
+    /// <summary>
+    /// Faixas Numéricas de Seccionamento
+    /// </summary>
+    public ICollection<FaixaNumericaSeccionamento> FaixasNumericasSeccionamento { get; set; } = [];
+```
+
+
 ```csharp title="Correios.DneBasico.Data/Configurations/FaixaNumericaSeccionamentoConfiguration.cs"
 namespace Correios.DneBasico.Data.Configurations;
 
@@ -1575,17 +1626,12 @@ public class FaixaNumericaSeccionamentoConfiguration : IEntityTypeConfiguration<
     {
         builder.ToTable("faixas_numericas_seccionamento");
 
-        builder.HasKey(x => x.LogradouroId);
+        builder.HasKey(x => new { x.LogradouroId, x.SeccionamentoInicial, x.ParidadeLado });
 
         builder.Property(x => x.LogradouroId)
             .HasColumnName("log_nu")
             .ValueGeneratedNever()
             .IsRequired();
-
-        builder.HasOne(x => x.Logradouro)
-            .WithOne()
-            .HasForeignKey<FaixaNumericaSeccionamento>(x => x.LogradouroId)
-            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(x => x.SeccionamentoInicial)
             .HasColumnName("sec_nu_ini")
@@ -1638,37 +1684,37 @@ namespace Correios.DneBasico.Domain.Entities;
 public class GrandeUsuario
 {
     /// <summary>
-    /// chave do grande usuário
+    /// Chave do grande usuário
     /// </summary>
     public int Id { get; set; }
-
+    
     /// <summary>
-    /// sigla da UF
+    /// Sigla da UF
     /// </summary>
     public string Uf { get; set; } = default!;
 
     /// <summary>
-    /// chave da localidade
+    /// Chave da localidade
     /// </summary>
     public int LocalidadeId { get; set; }
 
     /// <summary>
-    /// chave do bairro
+    /// Chave do bairro
     /// </summary>
     public int BairroId { get; set; }
 
     /// <summary>
-    /// chave do logradouro (opcional)
+    /// Chave do logradouro (opcional)
     /// </summary>
     public int? LogradouroId { get; set; }
 
     /// <summary>
-    /// nome do grande usuário
+    /// Nome do grande usuário
     /// </summary>
     public string Nome { get; set; } = default!;
 
     /// <summary>
-    /// endereço do grande usuário
+    /// Endereço do grande usuário
     /// </summary>
     public string Endereco { get; set; } = default!;
 
@@ -1678,7 +1724,7 @@ public class GrandeUsuario
     public string Cep { get; set; } = default!;
 
     /// <summary>
-    /// abreviatura do nome do grande usuário (opcional)
+    /// Abreviatura do nome do grande usuário (opcional)
     /// </summary>
     public string? NomeAbreviado { get; set; }
 
@@ -1942,17 +1988,17 @@ namespace Correios.DneBasico.Domain.Entities;
 public class FaixaCaixaPostalUop
 {
     /// <summary>
-    /// chave da UOP
+    /// Chave da UOP
     /// </summary>
     public int UnidadeOperacionalId { get; set; }
 
     /// <summary>
-    /// número inicial da caixa postal
+    /// Número inicial da caixa postal
     /// </summary>
     public string CaixaPostalInicial { get; set; } = default!;
 
     /// <summary>
-    /// número final da caixa postal
+    /// Número final da caixa postal
     /// </summary>
     public string CaixaPostalFinal { get; set; } = default!;
 
@@ -2215,6 +2261,7 @@ Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correi
 
 ## Outras partes desta série
 - [Estrutura da Base de CEPs dos Correios - parte 2 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2)
+- [Estrutura da Base de CEPs dos Correios - parte 3 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-3)
 
 ## Código Fonte
 O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)
@@ -2230,6 +2277,7 @@ O código fonte completo deste projeto está disponível no GitHub: [Correios.Dn
 | Data         |                    Atualização                    |
 | :----------- | :---------------------------------------------- | 
 | 17/12/2025 | Alteração das classes dos modelos para refletir as mudanças criadas após revisão durante a criação da parte 2 do artigo e inclusão do Arquivo Global. |
+| 23/12/2025 | Mudança na configuração da FaixasNumericasSeccionamento criando uma chave composta e adicionando a navigation property na entidade Logradouro. Pequenos ajustes nas nomenclaturas e summaries das propriedas das entidades. |
 
 <a id="notas-de-rodape"></a>
 <small>

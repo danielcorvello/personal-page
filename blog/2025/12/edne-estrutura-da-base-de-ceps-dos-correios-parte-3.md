@@ -2,7 +2,7 @@
 slug: edne-estrutura-da-base-de-ceps-dos-correios-parte-3
 title: "e-DNE - Estrutura da Base de CEPs dos Correios - parte 3 de 3"
 authors: ["corvello"]
-date: 2025-12-23
+date: 2025-12-22
 tags: ["correios", "ceps", "banco-de-dados", "dotnet", "fastendpoints"]
 draft: false
 toc_max_heading_level: 3
@@ -10,7 +10,7 @@ image: /img/blog/estrutura-base-dados-cep/og-edne-parte-3.png
 ---
 
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 3 de 3
-Nesta terceira e última parte da série sobre a estrutura da base de dados e-DNE dos Correios, iremos finalizar com a criação de uma API RESTful para expor os dados importados. Para isso, continuaremos com o projeto que iniciamos na [parte 1](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1) e [parte 2](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2), onde criamos o importador dos dados da base DNE Básico. Nele adicionaremos um projeto de API que utilizará o DbContext para consultar os dados e expô-los através de endpoints RESTful. A API será construída utilizando o [FastEndpoints](https://fast-endpoints.com/) e a library [Gridify](https://alirezanet.github.io/Gridify/) para facilitar a paginação, ordenação e filtragem dos dados. Iniciaremos agora com a criação do projeto da API.
+Nesta terceira e última parte da série sobre a estrutura da base de dados e-DNE dos Correios, iremos finalizar com a criação de uma API RESTful para expor os dados importados. Para isso, continuaremos com o projeto que iniciamos na [parte 1](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1) e [parte 2](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2), onde criamos o importador dos dados do DNE Básico. Nele adicionaremos um projeto de API que utilizará o DbContext para consultar os dados e expô-los através de endpoints RESTful. A API será construída utilizando o [FastEndpoints](https://fast-endpoints.com/) e a library [Gridify](https://alirezanet.github.io/Gridify/) para facilitar a paginação, ordenação e filtragem dos dados. Iniciaremos agora com a criação do projeto da API.
 
 <!-- truncate -->
 ## Criação do projeto da API
@@ -23,7 +23,6 @@ Adicione uma referência ao projeto `Correios.DneBasico.Data` no projeto `Correi
 FastEndpoints 7.1.1
 FastEndpoints.Swagger 7.1.1
 Gridify.EntityFramework 2.17.2
-MicroElements.NSwag.FluentValidation 7.0.1
 ```
 
 Adicione um arquivo `Global.Usings.cs` no projeto `Correios.DneBasico.Api` com o seguinte conteúdo para facilitar o uso dos namespaces comuns:
@@ -94,7 +93,7 @@ Antes de saírmos "codando", vamos organizar a estrutura do projeto e delimitar 
 - Ceps (`GetCeps` e `GetCep(cep)`)
 - Estados (`GetEstados`)
 - Grandes Usuários (`GetGrandesUsuarios`)
-- Localidades (`GetLocalidades`)
+- Localidades (`GetLocalidades` e `GetCidades`)
 - Logradouros (`GetLogradouros`)
 - Países (`GetPaises`)
 - Unidades Operacionais (`GetUnidadesOperacionais`)
@@ -214,6 +213,7 @@ public static class ApiConstants
         public const string UNIDADES_OPERACIONAIS = "unidades-operacionais";
         public const string CAIXAS_POSTAIS_COMUNITARIAS = "caixas-postais-comunitarias";
         public const string GRANDES_USUARIOS = "grandes-usuarios";
+        public const string PAISES = "paises";
     }
 }
 ```
@@ -387,7 +387,24 @@ Você receberá uma resposta semelhante a esta:
 
 Isso é um ótimo sinal! Significa que o endpoint está funcionando corretamente e retornando os dados paginados. Agora vamos entender como o Gridify está nos ajudando a implementar a filtragem e ordenação dos dados.
 
-Se adicionarmos o valor `nome=*Centro` no parâmetro `filter`, o Gridify irá interpretar esse filtro e aplicar na consulta. O operador `=*` indica que queremos filtrar os bairros cujo nome contém a palavra "Centro". O Gridify suporta diversos operadores para filtragem, como `=`, `!=`, `>`, `<`, `>=`, `<=`, `*=` (contém), `^` (inicia com), `$` (termina com), entre outros. Você pode consultar a documentação oficial do Gridify para mais detalhes sobre os operadores de filtragem disponíveis em [Filtering](https://alirezanet.github.io/Gridify/guide/filtering#conditional-operators)
+Se adicionarmos o valor `nome=*Centro` no parâmetro `filter`, o Gridify irá interpretar esse filtro e aplicar na consulta. O operador `=*` indica que queremos filtrar os bairros cujo nome contém a palavra "Centro". O Gridify suporta diversos operadores para filtragem, como `=`, `!=`, `>`, `<`, `>=`, `<=`, `*=` (contém), `^` (inicia com), `$` (termina com), entre outros. Você pode consultar a documentação oficial do Gridify para mais detalhes sobre os operadores de filtragem disponíveis em [Filtering](https://alirezanet.github.io/Gridify/guide/filtering#conditional-operators). Para uma referência rápida, veja a tabela abaixo:
+
+Operadores condicionais do Gridify:
+
+| Operação | Operator | Exemplo de uso |
+|------|:----------:|----------------|
+| Igual | {'='} | "nomeDoCampo = Value" |
+| Diferente | {'!='} | "nomeDoCampo {'!='}Value" |
+| Menor Que | {'<'} | "nomeDoCampo {'<'} Value" |
+| Maior Que | {'>'} | "nomeDoCampo {'>'} Value" |
+| Maior Ou Igual | {'>='} | "nomeDoCampo {'>='}Value" |
+| Menor Ou Igual | {'<='} | "nomeDoCampo {'<='}Value" |
+| Contêm - Like | {'=*'} | "nomeDoCampo {'=*'}Value" |
+| Não contêm - NotLike | {'!*'} | "nomeDoCampo {'!*'}Value" |
+| Inicia Com | {'^'} | "nomeDoCampo {'^'} Value" |
+| Não Inicia Com | {'!^'} | "nomeDoCampo {'!^'} Value" |
+| Termina Com | {'$'} | "nomeDoCampo {'$'} Value" |
+| Não Termina Com | {'!$'} | "nomeDoCampo {'!$'} Value" |
 
 A ordenação funciona de forma semelhante. Se adicionarmos o valor `nome desc` no parâmetro `orderBy`, o Gridify irá ordenar os bairros pelo nome em ordem decrescente. Podemos combinar múltiplos campos de ordenação separando-os por vírgula, como `uf asc, nome desc`. Consulte a documentação oficial do Gridify para mais detalhes sobre a ordenação em
 [Ordering](https://alirezanet.github.io/Gridify/guide/ordering)
@@ -407,6 +424,7 @@ class GetBairrosRequestMapper : GridifyMapper<Bairro>
         AddMap(nameof(GetBairrosResponse.Id), o => o.Id);
         AddMap(nameof(GetBairrosResponse.Nome), o => o.Nome);
         AddMap(nameof(GetBairrosResponse.Uf), o => o.Uf);
+        AddMap(nameof(GetBairrosResponse.Localidade), o => o.Localidade.Nome);
         AddMap(nameof(GetBairrosResponse.LocalidadeId), o => o.LocalidadeId);
     }
 }
@@ -517,7 +535,6 @@ Ainda no arquivo `Program.cs`, vamos melhorar a configuração do Swagger e do F
 
 ```csharp title="Correios.DneBasico.Api/Program.cs"
 using FastEndpoints.Swagger;
-using MicroElements.NSwag.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http.Json;
 using NSwag;
 using System.Text.Json.Serialization;
@@ -547,8 +564,6 @@ builder.Services
         // Remove esquemas de requisição vazios do Swagger
         o.RemoveEmptyRequestSchema = true;
     });
-
-builder.Services.AddFluentValidationRulesToSwagger();
 
 builder.Services.AddDbContext<DneBasicoDbContext>(options =>
     options.UseNpgsql(Configuration.GetConnectionString("eDNE")));
@@ -1092,7 +1107,7 @@ public class GetCepEndpoint : Endpoint<GetCepRequest, GetCepResponse>
 
     public override void Configure()
     {
-        Get($"/{ApiConstants.RouteNames.CEPS}/{{Cep}}");
+        Get($"/{ApiConstants.RouteNames.CEPS}/{{cep:length(8,9)}}");
         AllowAnonymous();
 
         Description(b => b
@@ -1129,8 +1144,10 @@ public class GetCepEndpoint : Endpoint<GetCepRequest, GetCepResponse>
 
     public override async Task HandleAsync(GetCepRequest req, CancellationToken ct)
     {
+        var cepNormalizado = req.Cep.Replace("-", "").Trim();
+
         var cep = await _dbContext.Ceps
-            .Where(c => c.Codigo == req.Cep)
+            .Where(c => c.Codigo == cepNormalizado)
             .FirstOrDefaultAsync(ct);
 
         if (cep is not null)
@@ -1169,7 +1186,7 @@ public class GetCepRequestValidator : Validator<GetCepRequest>
     {
         RuleFor(x => x.Cep)
             .NotEmpty().WithMessage("O CEP é obrigatório.")
-            .Matches(@"^\d{8}$").WithMessage("O CEP deve conter exatamente 8 dígitos numéricos.");
+            .Matches(@"^\d{5}\-?\d{3}$").WithMessage("Cep inválido");
     }
 }
 public record GetCepResponse(
@@ -1195,7 +1212,9 @@ Com isso criamos uma base para adicionarmos os endpoints restantes. Sinta-se à 
 O código completo do projeto´, incluindo todos os endpoints, está disponível no GitHub no repositório [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico). Se tiver alguma dúvida ou sugestão, fique à vontade para abrir uma issue ou contribuir com o projeto. Você também pode me contatar diretamente para discutir melhorias ou novas funcionalidades através do meu LinkedIn: [Daniel Corvello](https://www.linkedin.com/in/danielcorvello/).
 
 ## Conclusão
-Nesta série de artigos, exploramos a estrutura da base de CEPs dos Correios, como converte-la para um banco de dados relacional utilizando o Entity Framework Core, e como criar uma API RESTful utilizando o FastEndpoints. Também vimos como implementar paginação, filtragem e ordenação utilizando o Gridify, além de melhorar a documentação do Swagger. Espero que esses artigos tenham sido úteis para você. Se você gostou do conteúdo, não hesite em compartilhar e contribuir para o crescimento da comunidade de desenvolvedores. Até a próxima!
+Nesta série de artigos, exploramos a estrutura da base de CEPs dos Correios, como converte-la para um banco de dados relacional utilizando o Entity Framework Core, e como criar uma API RESTful utilizando o FastEndpoints. Também vimos como implementar paginação, filtragem e ordenação utilizando o Gridify, além de melhorar a documentação do Swagger. Espero que esses artigos tenham sido úteis para você. 
+
+Em um próximo artigo, pretendo demonstrar como incluir testes de integração utilizando o [FastEndpoints](https://fast-endpoints.com/docs/integration-unit-testing), [xUnit](https://xunit.net/) e [TestContainers](https://dotnet.testcontainers.org/) para garantir a qualidade da API criada. Se você gostou do conteúdo, não hesite em compartilhar e contribuir. Até a próxima!
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)

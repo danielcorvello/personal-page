@@ -1,11 +1,13 @@
 ﻿---
-slug: 2025/11/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet
+slug: fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet
 title: "FastEndpoints: Simplificando o desenvolvimento de APIs em .NET"
 authors: [corvello]
 tags: [dotnet, fastendpoints, api, vsa]
 date: 2025-11-13
 toc_max_heading_level: 3
 image: /img/blog/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet/og_image.png
+redirect_from:
+  - /2025/11/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet
 ---
 
 # FastEndpoints: Simplificando o desenvolvimento de APIs em .NET

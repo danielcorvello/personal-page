@@ -20,7 +20,11 @@ const config: Config = {
     },
   },
 
-  plugins: ["plugin-image-zoom"],
+  plugins: [
+    "plugin-image-zoom",
+    '@docusaurus/plugin-client-redirects'    
+  ],
+
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4

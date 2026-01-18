@@ -79,7 +79,7 @@ const config: Config = {
           routeBasePath: "/", // Serve the blog at the site's root
           blogSidebarTitle: " ",
           blogSidebarCount: 5,
-          postsPerPage: 2,
+          postsPerPage: 10,
 
           showReadingTime: true,
           feedOptions: {

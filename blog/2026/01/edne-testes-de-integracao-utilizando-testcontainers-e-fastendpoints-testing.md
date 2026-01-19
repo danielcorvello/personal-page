@@ -17,19 +17,21 @@ Neste artigo, vamos explorar como implementar testes de integração utilizando 
 [Testcontainers](https://dotnet.testcontainers.org/) é uma biblioteca que facilita a criação e o gerenciamento de containers Docker para testes automatizados. Ela permite que você crie ambientes de teste isolados, garantindo que seus testes sejam executados em condições controladas e reproduzíveis. Podemos utilizar os módulos pré-construídos para bancos de dados, como PostgreSQL, ou criar containers personalizados conforme necessário.
 
 ## Pré-Configuração do Projeto
-Para começar, certifique-se de que você tenha o Docker instalado e em execução na sua máquina e faça um clone do repositório do projeto e acesse a versão 1.0 do código:
+Para começar, certifique-se de que você tenha o Docker instalado e em execução na sua máquina e faça um clone do repositório do projeto e crie uma branch para testes de integração a partir da tag `v1.0.0`. Você pode fazer isso executando os seguintes comandos no terminal:
 
 ```bash
+# Clone o repositório
 git clone https://github.com/danielcorvello/Correios.DneBasico.git
+# Acesse o diretório do projeto
 cd Correios.DneBasico
-git checkout v1.0.0
+# Crie e acesse a branch de testes de integração a partir da v1.0.0
+git checkout -b testes-integracao v1.0.0
 ```
 
 Iremos atualizar alguns pacotes nos projeto da API para aproveitarmos de algumas melhorias e correções introduzidas nas versões mais recentes. No projeto `Correios.DneBasico.Api`, atualize os seguintes pacotes para as versões indicadas:
 - FastEndpoints 7.2.0
 - FastEndpoints.Swagger 7.2.0
 - MicroElements.NSwag.FluentValidation 7.0.3
-
 
 ```bash
 dotnet add package FastEndpoints --version 7.2.0
@@ -38,7 +40,17 @@ dotnet add package MicroElements.NSwag.FluentValidation --version 7.0.3
 ```
 
 ## Criando o projeto de Testes de Integração
-Vamos criar um novo projeto de testes de integração utilizando xUnit. No Visual Studio, adicione um novo projeto do tipo "xUnit Test Project" à solução e nomeie-o como `Correios.DneBasico.Api.IntegrationTests`. Em seguida, adicione as seguintes referências de projeto e pacotes NuGet:
+Vamos criar um novo projeto de testes de integração utilizando xUnit. No Visual Studio, adicione um novo projeto do tipo "xUnit.net v3 Test Project" à solução e nomeie-o como `Correios.DneBasico.Api.IntegrationTests`. 
+
+:::info
+Caso você não esteja visualizando a opção de projeto "xUnit.net v3 Test Project", use o seguinte comando no terminal para instalar o template globalmente:
+
+```bash
+dotnet new install xunit.v3.templates
+```
+:::
+
+Em seguida, adicione as seguintes referências de projeto e pacotes NuGet:
 - Referência ao projeto `Correios.DneBasico.Api`
 - Refência ao projeto `Correios.DneBasico.Importer`
 - Testcontainers.PostgreSql 4.10.0
@@ -69,11 +81,11 @@ No projeto de testes, crie um diretório chamado `Setup` e adicione uma classe c
 
 ```csharp title="Setup/Sut.cs"
 using Correios.DneBasico.Data.Contexts;
-using Correios.DneBasico.Importer;
+using FastEndpoints.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Testcontainers.PostgreSql;
-using FastEndpoints.Testing;
 
 namespace Correios.DneBasico.Api.IntegrationTests.Setup;
 
@@ -144,7 +156,7 @@ public async Task ImportarTudoAsync()
     await PovoarTabelaUnificadaAsync();
 }
 ```
-No arquivo `Program.cs` do Importer, substitua as chamadas para o método `ImportarArquivoCsv` pelo novo método `ImportarTudoAsync`:
+No arquivo `Program.cs` do Importer, substitua as chamadas para o método `ImportarArquivoCsv` e para `PovoarTabelaUnificadaAsync` pelo novo método `ImportarTudoAsync`:
 
 ```csharp title="Program.cs"
 //...
@@ -292,33 +304,6 @@ public const string ORDERBY_QUERY = "orderBy";
 Agora, vamos adicionar um teste para verificar se o endpoint retorna a lista de bairros ordenada corretamente:
 
 ```csharp title="Features/Bairros/GetBairrosEndpointTests.cs"
-[Fact(DisplayName = "Deve retornar a lista de bairros ordenada por nome (FastEndpoints)")]
-[Trait("Integração", nameof(GetBairrosEndpoint))]
-public async Task Deve_Retornar_Lista_De_Bairros_Ordenada_Por_Nome_FastEndpoints()
-{
-    var orderBy = "Nome asc, id asc";
-
-    var request = new GetBairrosRequest()
-    {
-        OrderBy = orderBy,
-        PageNumber = 1,
-        PageSize = 20
-    };
-
-    var (response, bairros) = await sut.Client.GETAsync<GetBairrosEndpoint, GetBairrosRequest, PagedResponse<GetBairrosResponse>>(request);
-
-    // Assert     
-    response.EnsureSuccessStatusCode();
-    bairros.ShouldNotBeNull();
-    bairros.Data.Count.ShouldBeGreaterThan(0);
-
-    var bairrosOrdenados = bairros.Data
-        .OrderBy(b => b.Nome, StringComparer.OrdinalIgnoreCase)
-        .ThenBy(b => b.Id)
-
-    bairros.Data.ShouldBe(bairrosOrdenados);
-}
-
 [Fact(DisplayName = "Deve retornar a lista de bairros ordenada por id (FastEndpoints)")]
 [Trait("Integração", nameof(GetBairrosEndpoint))]
 public async Task Deve_Retornar_Lista_De_Bairros_Ordenada_Por_Id_FastEndpoints()
@@ -343,8 +328,7 @@ public async Task Deve_Retornar_Lista_De_Bairros_Ordenada_Por_Id_FastEndpoints()
     bairros.Data.ShouldBe(bairrosOrdenados);
 }
 ```
-Realizamos dois testes para verificar a ordenação dos bairros por nome e por ID, respectivamente. Em ambos os testes, enviamos uma requisição para o endpoint `GET /bairros` com o parâmetro de ordenação definido e verificamos se a lista retornada está ordenada corretamente. No teste de ordenação por nome, incluímos um segundo argumento `id asc` na cláusula `orderBy` para garantir uma ordenação consistente em casos onde os nomes dos bairros sejam iguais. Além disso,
- utilizamos `StringComparer.OrdinalIgnoreCase` para garantir que a ordenação seja feita de forma case-insensitive e respeitando a mesma ordenação utilizada pelo banco de dados PostgreSQL. Dependendo do collation utilizado no banco de dados, a ordenação pode ser sensível a maiúsculas e minúsculas, o que pode levar a resultados inesperados nos testes.
+Realizamos um teste para verificar a ordenação dos bairros pelo Id. No teste, enviamos uma requisição para o endpoint `GET /bairros` com o parâmetro de ordenação definido e verificamos se a lista retornada está ordenada corretamente.
 
 ### Teste 3: Filtro por nome
 Vamos adicionar um teste para verificar se o endpoint retorna o bairro correto quando filtrado pelo nome:
@@ -382,7 +366,7 @@ public async Task Deve_Retornar_Bairros_De_Acordo_Com_O_Filtro_De_Localidade_Fas
 {
     var localidadeId = 9703; // Id da localidade Suzano/SP
 
-    var filter = $"LocalidadeId=={localidadeId}";
+    var filter = $"LocalidadeId={localidadeId}";
 
     var request = new GetBairrosRequest()
     {
@@ -444,8 +428,8 @@ public async Task Deve_Retornar_Erro_400_Para_Paginacao_Invalida_FastEndpoints()
 
     // Assert
     response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    res.Errors.ShouldContainKey(nameof(request.PageNumber));
-    res.Errors.ShouldContainKey(nameof(request.PageSize));
+    res.Errors.ShouldContainKey(ApiConstants.RouteNames.PAGE_NUMBER_QUERY);
+    res.Errors.ShouldContainKey(ApiConstants.RouteNames.PAGE_SIZE_QUERY);
 }
 ```
 
@@ -473,6 +457,8 @@ public async Task Deve_Retornar_Erro_400_Para_Ordenacao_Invalida_FastEndpoints()
 ```
 
 Este teste envia uma requisição para o endpoint `GET /bairros` com um parâmetro de ordenação que utiliza uma propriedade inexistente. Em seguida, verificamos se a resposta retorna um status code 400 (Bad Request) e se a mensagem de erro está correta.
+
+Execute todos os testes implementados para garantir que o endpoint `GET /bairros` esteja funcionando corretamente em diferentes cenários. Lembre-se de que, como estamos utilizando o Testcontainers para criar um ambiente de teste isolado com um banco de dados PostgreSQL, os testes podem levar algum tempo para serem executados devido à inicialização do container e à importação dos dados.
 
 ## Conclusão
 Neste artigo, exploramos como implementar testes de integração utilizando a biblioteca Testcontainers em um projeto .NET com FastEndpoints. Configuramos um ambiente de testes isolado utilizando containers Docker para o banco de dados PostgreSQL e implementamos diversos testes para o endpoint de consulta de bairros, verificando funcionalidades como paginação, ordenação e filtros. A utilização do Testcontainers nos permitiu criar um ambiente de teste consistente e reproduzível, garantindo a confiabilidade dos nossos testes de integração. Além disso, a biblioteca FastEndpoints.Testing facilitou a criação e execução dos testes, abstraindo boa parte da complexidade envolvida na configuração do ambiente de teste e no envio das requisições HTTP. Com essa abordagem, podemos garantir que nossa API esteja funcionando corretamente em diferentes cenários, aumentando a qualidade e a confiabilidade do nosso software.

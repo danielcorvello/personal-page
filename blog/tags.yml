@@ -52,3 +52,24 @@ banco-de-dados:
   label: Banco de Dados
   permalink: /banco-de-dados
   description: Banco de Dados
+
+testcontainers:
+  label: Testcontainers
+  permalink: /testcontainers
+  description: Testcontainers for Integration Testing
+
+testes-de-integracao:
+  label: Testes de Integração
+  permalink: /testes-de-integracao
+  description: Integration Testing
+
+x-unit:
+  label: xUnit
+  permalink: /x-unit
+  description: xUnit Testing Framework
+
+shouldly:
+  label: Shouldly
+  permalink: /shouldly
+  description: Shouldly Assertion Library
+

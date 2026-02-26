@@ -328,6 +328,6 @@ A introdução do CNPJ alfanumérico é uma resposta necessária à escassez de 
 O código fonte completo deste projeto, incluindo alguns testes unitários, está disponível no GitHub: [Cvllo.Cnpj](https://github.com/danielcorvello/Cvllo.Cnpj)
 
 ## Referências
-[CNPJ Alfanumérico - Receita Federal](https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/cnpj-alfanumerico)
-[CNPJ do Futuro](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/apresentacoes/outros-eventos/cnpj-alfanumerico-escolha-tecnica.pdf)
-[Cálculo do DV do CNPJ Alfanumérico](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj)
+- [CNPJ Alfanumérico - Receita Federal](https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/acoes-e-programas/programas-e-atividades/cnpj-alfanumerico)
+- [CNPJ do Futuro](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/apresentacoes/outros-eventos/cnpj-alfanumerico-escolha-tecnica.pdf)
+- [Cálculo do DV do CNPJ Alfanumérico](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj)

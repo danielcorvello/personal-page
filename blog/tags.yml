@@ -73,3 +73,12 @@ shouldly:
   permalink: /shouldly
   description: Shouldly Assertion Library
 
+cnpj:
+  label: CNPJ
+  permalink: /cnpj
+  description: Cadastro Nacional da Pessoa Jurídica
+
+csharp:
+  label: C#
+  permalink: /csharp
+  description: C# Programming Language

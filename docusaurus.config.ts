@@ -6,7 +6,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "Daniel Corvello",
-  tagline: ".NET Developer",
+  tagline: "Engenheiro de Software .NET | Blog pessoal sobre desenvolvimento de software, .NET, C#, ASP.NET Core e FastEndpoints.",
   favicon: "img/favicon.ico",
 
   themes: ["@docusaurus/theme-mermaid"],
@@ -118,7 +118,7 @@ const config: Config = {
         srcDark: "img/logo-color-white.svg",
       },
       items: [
-        { to: "/", label: "Blog", position: "left" },
+        { to: "/", label: "Artigos", position: "left" },
         {
           to: "/sobre-mim",
           label: "Sobre mim",
@@ -135,8 +135,12 @@ const config: Config = {
       style: "dark",
       links: [
         {
-          title: "Sobre mim",
+          // title: "Sobre mim",
           items: [
+            {
+              label: "Artigos",
+              to: "/",
+            },
             {
               label: "GitHub",
               href: "https://github.com/danielcorvello",
@@ -144,10 +148,6 @@ const config: Config = {
             {
               label: "LinkedIn",
               href: "https://www.linkedin.com/in/danielcorvello/",
-            },
-            {
-              label: "Blog",
-              to: "/",
             },
           ],
         },

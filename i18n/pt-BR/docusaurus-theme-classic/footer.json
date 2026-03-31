@@ -14,9 +14,5 @@
   "link.item.label.Blog": {
     "message": "Blog",
     "description": "The label of footer link with label=Blog linking to /blog"
-  },
-  "copyright": {
-    "message": "© 2025 Daniel Corvello. Feito com <a href=\"https://docusaurus.io\">Docusaurus</a>, hospedado no <a href=\"https://pages.github.com\">GitHub Pages</a>.",
-    "description": "The footer copyright"
   }
 }

@@ -9,6 +9,8 @@ toc_max_heading_level: 3
 image: /img/blog/edne-testes-de-integracao/og-edne-integration-test.png
 ---
 
+import ConsultativeCta from "@site/src/ConsultativeCta";
+
 # e-DNE - Testes de Integração utilizando Testcontainers e FastEndpoints.Testing
 Neste artigo, vamos explorar como implementar testes de integração utilizando as bibliotecas [Testcontainers](https://dotnet.testcontainers.org/), [FastEndpoints.Testing](https://fast-endpoints.com/docs/integration-unit-testing#integration-testing), [xUnit](https://xunit.net/) e [Shouldly](https://docs.shouldly.org/) no nosso projeto [e-DNE](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1), uma API RESTful desenvolvida em .NET com [FastEndpoints](https://fast-endpoints.com/docs/) para consulta de endereços via CEP, integrada a um banco de dados PostgreSQL. O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)
 <!-- truncate -->
@@ -464,6 +466,12 @@ Execute todos os testes implementados para garantir que o endpoint `GET /bairros
 Neste artigo, exploramos como implementar testes de integração utilizando a biblioteca Testcontainers em um projeto .NET com FastEndpoints. Configuramos um ambiente de testes isolado utilizando containers Docker para o banco de dados PostgreSQL e implementamos diversos testes para o endpoint de consulta de bairros, verificando funcionalidades como paginação, ordenação e filtros. A utilização do Testcontainers nos permitiu criar um ambiente de teste consistente e reproduzível, garantindo a confiabilidade dos nossos testes de integração. Além disso, a biblioteca FastEndpoints.Testing facilitou a criação e execução dos testes, abstraindo boa parte da complexidade envolvida na configuração do ambiente de teste e no envio das requisições HTTP. Com essa abordagem, podemos garantir que nossa API esteja funcionando corretamente em diferentes cenários, aumentando a qualidade e a confiabilidade do nosso software.
 
 Fique a vontade para explorar mais funcionalidades do Testcontainers e do FastEndpoints.Testing em seus próprios projetos de testes de integração! Treine a sua criatividade implementando testes para outros endpoints e cenários, garantindo a qualidade da sua aplicação. Se você gostou do conteúdo, não hesite em compartilhar e contribuir. Até a próxima!
+
+<ConsultativeCta
+  compact
+  subtitle="Quando CEP, API e atualização de dados já fazem parte de um fluxo crítico, confiabilidade não é detalhe técnico. Ela precisa entrar no desenho da rotina desde cedo."
+  secondaryAction={{ label: "Ver o serviço de CEP", href: "/servicos/base-cep" }}
+/>
 
 ## Artigos relacionados
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)

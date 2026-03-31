@@ -1,0 +1,326 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 5.25rem 2rem 4.5rem;
+  background:
+    radial-gradient(circle at top left, rgba(198, 216, 14, 0.3), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(198, 216, 14, 0.14), transparent 32%),
+    linear-gradient(140deg, #121810 0%, #1a2516 52%, #24311d 100%);
+  color: #f6f8ef;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -35% auto;
+  width: min(38vw, 360px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: rgba(198, 216, 14, 0.08);
+  filter: blur(10px);
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(246, 248, 239, 0.72);
+}
+
+.heroTitle {
+  margin-bottom: 0.85rem;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.heroTagline {
+  max-width: 780px;
+  margin: 0 auto;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: rgba(246, 248, 239, 0.92);
+}
+
+.heroNote {
+  max-width: 760px;
+  margin: 1rem auto 0;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: rgba(246, 248, 239, 0.76);
+}
+
+.proofStrip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1.7rem;
+}
+
+.proofItem {
+  padding: 0.65rem 0.95rem;
+  border: 1px solid rgba(246, 248, 239, 0.14);
+  border-radius: 999px;
+  background: rgba(246, 248, 239, 0.06);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: rgba(246, 248, 239, 0.94);
+}
+
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.9rem;
+}
+
+.heroActionPrimary,
+.heroActionSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.heroActionPrimary {
+  background: #c6d80e;
+  color: #182013 !important;
+  box-shadow: 0 14px 24px rgba(198, 216, 14, 0.24);
+}
+
+.heroActionSecondary {
+  background: rgba(246, 248, 239, 0.08);
+  color: #f6f8ef !important;
+  border: 1px solid rgba(246, 248, 239, 0.16);
+}
+
+.heroActionPrimary:hover,
+.heroActionSecondary:hover,
+.relatedPostCard:hover,
+.serviceCard:hover {
+  transform: translateY(-1px);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem 1rem;
+}
+
+.section {
+  margin-bottom: 3.5rem;
+}
+
+.sectionTitle {
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.description,
+.sectionLead {
+  max-width: 800px;
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.description:last-child {
+  margin-bottom: 0;
+}
+
+.signalGrid,
+.cardsGrid,
+.relatedPostsGrid,
+.serviceGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.signalGrid,
+.cardsGrid,
+.serviceGrid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.relatedPostsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.signalItem,
+.card,
+.relatedPostCard,
+.serviceCard {
+  height: 100%;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 18%, var(--ifm-color-emphasis-200));
+  background:
+    linear-gradient(180deg, rgba(198, 216, 14, 0.08), transparent 42%),
+    var(--ifm-card-background-color);
+  box-shadow: 0 18px 38px rgba(17, 22, 15, 0.05);
+}
+
+.signalItem {
+  padding: 1.35rem 1.25rem;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.card,
+.serviceCard {
+  padding: 1.5rem 1.35rem;
+}
+
+.cardTitle,
+.serviceCardTitle,
+.relatedPostTitle {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ifm-font-color-base);
+}
+
+.cardText,
+.serviceCardText,
+.relatedPostDescription {
+  margin: 0;
+  font-size: 0.96rem;
+  line-height: 1.72;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.pillGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.pill {
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 32%, transparent);
+  background: color-mix(in srgb, var(--ifm-color-primary) 12%, transparent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+.useCasesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.9rem 1.1rem;
+}
+
+.useCasesList li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.useCasesList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+}
+
+.useCaseLabel {
+  font-weight: 700;
+}
+
+.useCaseDesc {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.relatedPostCard,
+.serviceCard {
+  display: block;
+  padding: 1.45rem 1.35rem;
+  text-decoration: none !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.relatedPostLink,
+.serviceCardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary-dark);
+}
+
+.relatedPostLink::after,
+.serviceCardLink::after {
+  content: "→";
+}
+
+.serviceCardMeta {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 4.2rem 1.25rem 3.4rem;
+  }
+
+  .container {
+    padding: 2.5rem 1.25rem 0.5rem;
+  }
+
+  .heroCtas {
+    flex-direction: column;
+  }
+
+  .heroActionPrimary,
+  .heroActionSecondary {
+    width: 100%;
+  }
+
+  .pill {
+    width: 100%;
+    border-radius: 16px;
+  }
+}

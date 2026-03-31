@@ -9,6 +9,8 @@ toc_max_heading_level: 3
 image: /img/blog/estrutura-base-dados-cep/og-edne-parte-3.png
 ---
 
+import ConsultativeCta from "@site/src/ConsultativeCta";
+
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 3 de 3
 Nesta terceira e última parte da série sobre a estrutura da base de dados e-DNE dos Correios, iremos finalizar com a criação de uma API RESTful para expor os dados importados. Para isso, continuaremos com o projeto que iniciamos na [parte 1](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1) e [parte 2](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2), onde criamos o importador dos dados do DNE Básico. Nele adicionaremos um projeto de API que utilizará o DbContext para consultar os dados e expô-los através de endpoints RESTful. A API será construída utilizando o [FastEndpoints](https://fast-endpoints.com/) e a library [Gridify](https://alirezanet.github.io/Gridify/) para facilitar a paginação, ordenação e filtragem dos dados. Iniciaremos agora com a criação do projeto da API.
 
@@ -1215,6 +1217,12 @@ O código completo do projeto´, incluindo todos os endpoints, está disponível
 Nesta série de artigos, exploramos a estrutura da base de CEPs dos Correios, como converte-la para um banco de dados relacional utilizando o Entity Framework Core, e como criar uma API RESTful utilizando o FastEndpoints. Também vimos como implementar paginação, filtragem e ordenação utilizando o Gridify, além de melhorar a documentação do Swagger. Espero que esses artigos tenham sido úteis para você. 
 
 Em um próximo artigo, pretendo demonstrar como incluir testes de integração utilizando o [FastEndpoints](https://fast-endpoints.com/docs/integration-unit-testing), [xUnit](https://xunit.net/) e [TestContainers](https://dotnet.testcontainers.org/) para garantir a qualidade da API criada. Se você gostou do conteúdo, não hesite em compartilhar e contribuir. Até a próxima!
+
+<ConsultativeCta
+  compact
+  subtitle="Quando o dado de CEP já pede API própria, regras de consumo e sustentação ao longo do tempo, geralmente a demanda deixou de ser tutorial e virou operação."
+  secondaryAction={{ label: "Ver o serviço de CEP", href: "/servicos/base-cep" }}
+/>
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)

@@ -9,6 +9,8 @@ toc_max_heading_level: 3
 image: /img/blog/estrutura-base-dados-cep/og-edne-parte-1.png
 ---
 
+import ConsultativeCta from "@site/src/ConsultativeCta";
+
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 1 de 3
 Nesta série de artigos, exploraremos a estrutura da base de CEPs dos Correios, conhecida como e-DNE (Endereçamento Nacional Eletrônico). Dividiremos o conteúdo em três partes para facilitar a compreensão e implementação. Na primeira parte, abordaremos a estrutura dos CEPs e a base de dados e-DNE e criaremos as classes C# representando a estrutura dos dados. Na segunda parte implementaremos a leitura dos arquivos TXT e a persistência dos dados em um banco de dados PostgreSQL. Na terceira e última parte, criaremos uma API utilizando [FastEndpoints](../11/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet.md) para consultar os dados importados. 
 
@@ -2257,6 +2259,12 @@ Repare que estamos utilizando o método `ApplyConfigurationsFromAssembly` para a
 
 ## Conclusão
 Neste artigo, exploramos a estrutura do banco de dados do DNE Básico dos Correios, detalhando as principais tabelas e suas relações. Criamos entidades C# para representar essas tabelas e configuramos o EF Core para mapear essas entidades para o banco de dados. No próximo artigo, abordaremos a criação de um projeto para importar os dados do DNE Básico para o banco de dados utilizando o DbContext que criamos.
+
+<ConsultativeCta
+  compact
+  subtitle="Quando CEP e endereço já entraram no centro da sua operação, normalmente o trabalho não é só entender a fonte. É transformar essa base em rotina confiável para produto, dados e operações."
+  secondaryAction={{ label: "Ver o serviço de CEP", href: "/servicos/base-cep" }}
+/>
 
 
 ## Outras partes desta série

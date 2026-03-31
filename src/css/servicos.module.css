@@ -1,0 +1,270 @@
+.hero {
+  padding: 4.5rem 2rem;
+  background: var(--ifm-color-primary);
+  color: #1a1a1a;
+}
+
+.heroInner {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: clamp(2.4rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 0.75rem;
+}
+
+.heroTagline {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 1.18rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+.proofStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.proofItem {
+  padding: 0.5rem 0.85rem;
+  border: 1px solid rgba(26, 26, 26, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--ifm-color-primary);
+  padding-left: 0.75rem;
+}
+
+.description {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--ifm-font-color-base);
+}
+
+.description:last-child {
+  margin-bottom: 0;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.card {
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+  text-align: left;
+}
+
+.cardTitle {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.55rem;
+  color: var(--ifm-font-color-base);
+}
+
+.cardText {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+}
+
+.checkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.checkList li {
+  position: relative;
+  padding: 1rem 1rem 1rem 2.8rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  background: var(--ifm-card-background-color);
+  line-height: 1.6;
+}
+
+.checkList li::before {
+  content: "✓";
+  position: absolute;
+  top: 0.95rem;
+  left: 1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--ifm-color-primary-dark);
+  font-weight: 800;
+}
+
+.pillGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.pill {
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ifm-color-primary) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 45%, transparent);
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+.useCasesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.useCasesList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.useCasesList li::before {
+  content: "▸";
+  color: var(--ifm-color-primary-dark);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.useCaseLabel {
+  font-weight: 600;
+}
+
+.useCaseDesc {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.cta {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.ctaTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.ctaSubtitle {
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 1.5rem;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  background: #1a1a1a;
+  color: #fff !important;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.72);
+  color: #1a1a1a !important;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: opacity 0.2s, transform 0.2s;
+  border: 1px solid rgba(26, 26, 26, 0.16);
+}
+
+.btnSecondary:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.ctaNote {
+  max-width: 620px;
+  margin: 1rem auto 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 3.5rem 1.25rem;
+  }
+
+  .container {
+    padding: 2.25rem 1.25rem;
+  }
+
+  .cta {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .pill {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  .checkList li {
+    padding-right: 0.9rem;
+  }
+}

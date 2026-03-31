@@ -9,6 +9,8 @@ toc_max_heading_level: 3
 image: /img/blog/estrutura-base-dados-cep/og-edne-parte-2.png
 ---
 
+import ConsultativeCta from "@site/src/ConsultativeCta";
+
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 2 de 3
 Nesta segunda parte iremos continuar a explorar a estrutura da base de dados e-DNE dos Correios, focando na criação das tabelas com os dados dos arquivos TXT. Coninuaremos de onde paramos na [parte 1](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1) e iniciaremos com o criação do projeto de importação, seguindo pelo mapeamento das classes para os arquivos TXT que serão lidos pelo [CSVHelper](https://joshclose.github.io/CsvHelper/) e salvos no banco pelo EF Core. 
 
@@ -1301,6 +1303,12 @@ Execute novamente o projeto `Correios.DneBasico.Importer`. A tabela `ceps` será
 
 ## Conclusão
 Neste artigo, criamos um importador para a base DNE Básico dos Correios, utilizando C#, EF Core e PostgreSQL. Passamos por todo o processo de configuração do projeto, criação das entidades e mapeamentos, importação dos dados e criação de uma tabela unificada para facilitar as consultas de CEPs e endereços. Nosso próximo passo será criar uma API para consultar esses dados. Fique ligado para o próximo artigo da série!
+
+<ConsultativeCta
+  compact
+  subtitle="Se o desafio do seu time já não é importar o arquivo e sim manter uma camada de endereço confiável no fluxo da operação, esse é o momento em que parceria contínua começa a fazer diferença."
+  secondaryAction={{ label: "Ver o serviço de CEP", href: "/servicos/base-cep" }}
+/>
 
 ## Outros artigos desta série
 - [Estrutura da Base de CEPs dos Correios - parte 1 de 3](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1)

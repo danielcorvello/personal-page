@@ -3,17 +3,17 @@
     "message": "Daniel Corvello",
     "description": "The alt text of navbar logo"
   },
-  "item.label.Blog": {
-    "message": "Blog",
-    "description": "Navbar item with label Blog"
-  },
   "item.label.GitHub": {
     "message": "GitHub",
     "description": "Navbar item with label GitHub"
   },
-  "item.label.Projetos": {
-    "message": "Projetos",
-    "description": "Navbar item with label Projetos"
+  "item.label.Serviços": {
+    "message": "Serviços",
+    "description": "Navbar item with label Serviços"
+  },
+  "item.label.Artigos": {
+    "message": "Artigos",
+    "description": "Navbar item with label Artigos"
   },
   "item.label.Sobre mim": {
     "message": "Sobre mim",

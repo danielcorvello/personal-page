@@ -9,6 +9,8 @@ toc_max_heading_level: 3
 image: /img/blog/cnpj-alfanumerico/og-cnpj-alfanumerico.png
 ---
 
+import ConsultativeCta from "@site/src/ConsultativeCta";
+
 # CNPJ Alfanumérico com C#
 Devido a escassez de números de CNPJ disponíveis, a Receita Federal do Brasil, em 2024, anunciou a introdução do CNPJ alfanumérico. Este novo formato de CNPJ utiliza uma combinação de letras e números, permitindo a expansão do número de registros disponíveis. A estimativa da RFB era de que a quantidade de números disponíveis no range númerico se esgotaria entre 4.5 e 6 anos, o que motivou a adoção do formato alfanumérico que será, segundo as previsões atuais, atribuído a partir de Julho de 2026.
 
@@ -323,6 +325,12 @@ Os CNPJs existentes não serão convertidos para o formato alfanumérico, ou sej
 
 ## Conclusão
 A introdução do CNPJ alfanumérico é uma resposta necessária à escassez de números de CNPJ disponíveis, permitindo a expansão do número de registros e garantindo a continuidade dos negócios. Para quem não trata CNPJ como `texto`, a adaptação dos sistemas para lidar com o novo formato alfanumérico exigirá um esforço significativo. Este artigo apresentou uma visão geral do formato do CNPJ alfanumérico, os desafios relacionados à validação e uma implementação em C# para validar e gerar CNPJs alfanuméricos. Considere esse artigo e seu código fonte como um ponto de partida para a adaptação dos seus sistemas e para garantir que eles estejam prontos para lidar com o novo formato de CNPJ quando ele for introduzido em Julho de 2026. Se você gostou do conteúdo, não hesite em compartilhar e contribuir. Até a próxima!
+
+<ConsultativeCta
+  compact
+  subtitle="Se o CNPJ já atravessa CRM, onboarding, compliance ou integrações críticas na sua empresa, vale tratar essa adaptação como parte de uma rotina cadastral mais confiável."
+  secondaryAction={{ label: "Ver o serviço de CNPJ", href: "/servicos/cnpj" }}
+/>
 
 ## Código Fonte
 O código fonte completo deste projeto, incluindo alguns testes unitários, está disponível no GitHub: [Cvllo.Cnpj](https://github.com/danielcorvello/Cvllo.Cnpj)

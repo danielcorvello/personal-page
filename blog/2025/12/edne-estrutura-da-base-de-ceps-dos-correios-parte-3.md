@@ -12,7 +12,8 @@ image: /img/blog/estrutura-base-dados-cep/og-edne-parte-3.png
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 3 de 3
 Nesta terceira e última parte da série sobre a estrutura da base de dados e-DNE dos Correios, iremos finalizar com a criação de uma API RESTful para expor os dados importados. Para isso, continuaremos com o projeto que iniciamos na [parte 1](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1) e [parte 2](../edne-estrutura-da-base-de-ceps-dos-correios-parte-2), onde criamos o importador dos dados do DNE Básico. Nele adicionaremos um projeto de API que utilizará o DbContext para consultar os dados e expô-los através de endpoints RESTful. A API será construída utilizando o [FastEndpoints](https://fast-endpoints.com/) e a library [Gridify](https://alirezanet.github.io/Gridify/) para facilitar a paginação, ordenação e filtragem dos dados. Iniciaremos agora com a criação do projeto da API.
 
-<!-- truncate -->
+{/* truncate */}
+
 ## Criação do projeto da API
 Abra o projeto `Correios.DneBasico.sln` no Visual Studio e adicione um novo projeto chamado `Correios.DneBasico.Api`. Esse projeto será do tipo ASP.NET Core Web API.
 

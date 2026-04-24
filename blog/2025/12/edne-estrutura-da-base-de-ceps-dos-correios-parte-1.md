@@ -12,7 +12,8 @@ image: /img/blog/estrutura-base-dados-cep/og-edne-parte-1.png
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 1 de 3
 Nesta série de artigos, exploraremos a estrutura da base de CEPs dos Correios, conhecida como e-DNE (Endereçamento Nacional Eletrônico). Dividiremos o conteúdo em três partes para facilitar a compreensão e implementação. Na primeira parte, abordaremos a estrutura dos CEPs e a base de dados e-DNE e criaremos as classes C# representando a estrutura dos dados. Na segunda parte implementaremos a leitura dos arquivos TXT e a persistência dos dados em um banco de dados PostgreSQL. Na terceira e última parte, criaremos uma API utilizando [FastEndpoints](../11/fastendpoints-simplificando-o-desenvolvimento-de-apis-em-dotnet.md) para consultar os dados importados. 
 
-<!-- truncate -->
+{/* truncate */}
+
 ## Estrutura dos CEPs
 Segundo os Correios, O CEP (Códigos de Endereçamento Postal) pode ser definido como:
 
@@ -2279,7 +2280,7 @@ O código fonte completo deste projeto está disponível no GitHub: [Correios.Dn
 | 17/12/2025 | Alteração das classes dos modelos para refletir as mudanças criadas após revisão durante a criação da parte 2 do artigo e inclusão do Arquivo Global. |
 | 22/12/2025 | Mudança na configuração da FaixasNumericasSeccionamento criando uma chave composta e adicionando a navigation property na entidade Logradouro. Pequenos ajustes nas nomenclaturas e summaries das propriedades das entidades. |
 
-## Notas de rodapé {#notas-de-rodape}
+## Notas de rodapé {/* #notas-de-rodape */}
 <small>
 ¹ No DNE Básico, os arquivos podem ser encontrados em dois formatos: delimitados e fixos. No formato delimitado, os campos são separados por um caractere específico (neste caso, o arroba @), enquanto no formato fixo, cada campo possui um tamanho pré-definido. 
 </small>

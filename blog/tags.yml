@@ -82,3 +82,8 @@ csharp:
   label: C#
   permalink: /csharp
   description: C# Programming Language
+
+caged:
+  label: CAGED
+  permalink: /caged
+  description: Cadastro Geral de Empregados e Desempregados

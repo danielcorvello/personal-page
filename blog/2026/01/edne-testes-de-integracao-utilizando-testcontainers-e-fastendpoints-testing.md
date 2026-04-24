@@ -11,7 +11,7 @@ image: /img/blog/edne-testes-de-integracao/og-edne-integration-test.png
 
 # e-DNE - Testes de Integração utilizando Testcontainers e FastEndpoints.Testing
 Neste artigo, vamos explorar como implementar testes de integração utilizando as bibliotecas [Testcontainers](https://dotnet.testcontainers.org/), [FastEndpoints.Testing](https://fast-endpoints.com/docs/integration-unit-testing#integration-testing), [xUnit](https://xunit.net/) e [Shouldly](https://docs.shouldly.org/) no nosso projeto [e-DNE](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1), uma API RESTful desenvolvida em .NET com [FastEndpoints](https://fast-endpoints.com/docs/) para consulta de endereços via CEP, integrada a um banco de dados PostgreSQL. O código fonte completo deste projeto está disponível no GitHub: [Correios.DneBasico](https://github.com/danielcorvello/Correios.DneBasico)
-<!-- truncate -->
+{/* truncate */}
 
 ## Introdução ao Testcontainers
 [Testcontainers](https://dotnet.testcontainers.org/) é uma biblioteca que facilita a criação e o gerenciamento de containers Docker para testes automatizados. Ela permite que você crie ambientes de teste isolados, garantindo que seus testes sejam executados em condições controladas e reproduzíveis. Podemos utilizar os módulos pré-construídos para bancos de dados, como PostgreSQL, ou criar containers personalizados conforme necessário.

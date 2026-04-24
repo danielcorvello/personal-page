@@ -12,7 +12,8 @@ image: /img/blog/estrutura-base-dados-cep/og-edne-parte-2.png
 # e-DNE - Estrutura da Base de CEPs dos Correios - parte 2 de 3
 Nesta segunda parte iremos continuar a explorar a estrutura da base de dados e-DNE dos Correios, focando na criação das tabelas com os dados dos arquivos TXT. Coninuaremos de onde paramos na [parte 1](../edne-estrutura-da-base-de-ceps-dos-correios-parte-1) e iniciaremos com o criação do projeto de importação, seguindo pelo mapeamento das classes para os arquivos TXT que serão lidos pelo [CSVHelper](https://joshclose.github.io/CsvHelper/) e salvos no banco pelo EF Core. 
 
-<!-- truncate -->
+{/* truncate */}
+
 ## Criação do Projeto de Importação
 Iniciaremos criando o projeto `Correios.DneBasico.Importer`, que será do tipo Console Application. Esse projeto será responsável por ler os arquivos TXT da base DNE Básico, mapear os dados para as classes do projeto Domain e salvar os dados no banco de dados PostgreSQL utilizando o DbContext que criamos na parte 1.
 
@@ -843,7 +844,7 @@ Para facilitar a consulta dos dados importados, criaremos uma tabela unificada c
 
 Nos arquivos de leiaute da base DNE Básico, os Correios fornecem um script SQL para consultar os dados de forma unificada, mas o script foi feito para ser utilizado com o Access que vem na base DNE Master. Iremos adaptar esse script para o PostgreSQL. Mas antes, vamos ler as `instruções` fornecidas pelos Correios para criarmos a validação do CEP.
 
-:::info Regras para validação do CEP
+:::info[Regras para validação do CEP]
 __Como utilizar o DNE para validar o CEP__
 
 Normalmente os usuários do DNE querem implantar uma rotina para validação do CEP que recupere automaticamente os dados de endereço de seus clientes. Os clientes da modalidade master poderão simplificar os procedimentos descrito abaixo, gerando  uma nova tabela através da consulta CONCATENA_CEPs disponível no MDB.

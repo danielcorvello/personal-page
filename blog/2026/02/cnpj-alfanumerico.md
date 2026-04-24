@@ -13,7 +13,8 @@ image: /img/blog/cnpj-alfanumerico/og-cnpj-alfanumerico.png
 Devido a escassez de números de CNPJ disponíveis, a Receita Federal do Brasil, em 2024, anunciou a introdução do CNPJ alfanumérico. Este novo formato de CNPJ utiliza uma combinação de letras e números, permitindo a expansão do número de registros disponíveis. A estimativa da RFB era de que a quantidade de números disponíveis no range númerico se esgotaria entre 4.5 e 6 anos, o que motivou a adoção do formato alfanumérico que será, segundo as previsões atuais, atribuído a partir de Julho de 2026.
 
 Neste artigo, exploraremos como está estruturado o novo formato, como validar e gerar CNPJs alfanuméricos utilizando a linguagem de programação C# e os desafios relacionados com a mudança.
-<!-- truncate -->
+
+{/* truncate */}
 
 ## Estrutura do CNPJ Alfanumérico
 O formato do CNPJ alfanumérico é composto por 14 caracteres, onde os 8 primeiros caracteres, conhecidos como `cnpj básico`, podem ser alfanuméricos, seguidos por uma barra (`/`), os 4 caracteres seguintes, conhecidos como `nº de ordem`, também alfanuméricos, e por fim um hífen (`-`) seguido do dígito verificador (DV), que permanece numérico. A estrutura pode ser representada da seguinte forma:
@@ -312,7 +313,7 @@ private static int GerarNumeroAleatorio(int min, int max)
 
 O método `Gerar` começa criando um array de caracteres para armazenar os 12 primeiros caracteres do CNPJ. Ele gera aleatoriamente os 8 caracteres do cnpj básico e os 4 caracteres do número do estabelecimento utilizando o array `ValoresAlfanumericos` para selecionar caracteres alfanuméricos aleatórios. O método `GerarNumeroAleatorio` é utilizado para gerar números aleatórios utilizando a classe `RandomNumberGenerator` (Agradeço ao [`Github Copilot`](https://github.com/features/copilot?locale=pt-BR) por me ajudar com a criação desse método). O método `Gerar` também possui um parâmetro `gerarMatriz` que, quando definido como `true`, gera um CNPJ com número de estabelecimento fixo (`0001`), representando a matriz da empresa. Se `gerarMatriz` for definido como `false`, ele gera um número de estabelecimento aleatório. O método também possui um parâmetro `comPontuacao` que, quando definido como `true`, formata o CNPJ gerado no formato alfanumérico (AA.AAA.AAA/AAAA-DV) utilizando o método `Formatar`. O método retorna o CNPJ gerado como uma string.
 
-:::info Sobre os valores alfanuméricos
+:::info[Sobre os valores alfanuméricos]
 Os valores alfanuméricos incluem os dígitos de 0 a 9 e as letras de A a Z, totalizando 36 caracteres possíveis para cada posição alfanumérica do CNPJ. Caso você queira retirar os caracteres O, I, L e B, por exemplo, para evitar confusões com os números 0, 1 e 8 em sistemas OCR, você pode simplesmente remover esses caracteres do array `ValoresAlfanumericos`.
 :::
 

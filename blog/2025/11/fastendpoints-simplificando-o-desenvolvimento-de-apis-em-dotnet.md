@@ -14,7 +14,7 @@ redirect_from:
 
 Iniciei há alguns poucos anos um processo de `exploração alternativa` para encontrar maneiras de desenvolvimento alternativas aos tradicionais `Controllers` do ASP.NET Core no desenvolvimento de APIs. Explorei o Minimal API por um tempo, porém, não me senti completamente confortável com ele. A cada novo projeto, o processo de configuração e estruturação da API me parecia muito repetitivo e trabalhoso sendo necesssária a configuração manual de diversos aspectos, como rotas, validação de modelos, tratamento de erros, registro dos endpoints, CQRS, Repositórios, entre outros. Foi então que, em meados de 2022, descobri o [FastEndpoints](https://fast-endpoints.com/), uma biblioteca que nos direciona para a utilização do padrão `REPR (Request-Endpoint-Response)`.
 
-<!-- truncate -->
+{/* truncate */}
 
 O padrão [REPR](https://deviq.com/design-patterns/repr-design-pattern) propõe uma alternativa ao tradicional `MVC (Model-View-Controller)`, onde cada endpoint é representado por uma classe que encapsula a lógica de manipulação de requisições e respostas. Isso resulta em um código mais organizado, modular e fácil de manter, além de promover uma separação clara entre as responsabilidades de cada componente.
 
